@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        <!-- Assessment Info Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Assessment Info</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Title:</strong> {{ assessment.title }}</p>
+                <p><strong>Course:</strong> {{ assessment.course.title }}</p>
+                <p><strong>Duration:</strong> {{ assessment.duration_minutes }} mins</p>
+                <p><strong>Passing Score:</strong> {{ assessment.passing_score }}</p>
+                <p><strong>Deadline:</strong> {{ assessment.deadline|date:"M d, Y H:i" }}</p>
+                <p><strong>Status:</strong> 
+                    <span class="badge {% if assessment.status == 'PUBLISHED' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                        {{ assessment.status }}
+                    </span>
+                </p>
+                
+                {% if assessment.status == 'DRAFT' %}
+                <hr>
+                <form action="{% url 'publish_assessment' assessment.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success w-100">Publish Assessment</button>
+                    <small class="text-muted d-block mt-2">Publishing makes it visible to all enrolled trainees.</small>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Add Question Card -->
+        {% if assessment.status == 'DRAFT' %}
+        <div class="card shadow-sm mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Add New Question</h5>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'add_question' assessment.id %}" method="POST">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                        <div class="text-danger">
+                            {% for error in field.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary">Add Question</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Question List -->
+        <h4 class="mb-3">Questions ({{ questions.count }})</h4>
+        
+        {% if not questions %}
+        <div class="alert alert-info">No questions added yet.</div>
+        {% else %}
+            {% for question in questions %}
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Q{{ forloop.counter }}: {{ question.question_text }}</strong>
+                    <span class="badge bg-secondary">Weight: {{ question.weightage }}</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for option in question.options %}
+                        <li class="list-group-item {% if forloop.counter0 == question.correct_index %}list-group-item-success fw-bold{% endif %}">
+                            {{ option }} 
+                            {% if forloop.counter0 == question.correct_index %}(Correct Answer){% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

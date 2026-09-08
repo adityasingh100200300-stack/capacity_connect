@@ -3,8 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
 
+from django.utils import timezone
 from .models import Course, Enrollment
 from .forms import CourseForm
+from assessments.models import AssessmentAttempt
+from profiles.models import Certificate
 
 
 @login_required
@@ -47,8 +50,36 @@ def course_detail_view(request, course_id):
         is_enrolled = True  # Trainers/admins see all content
 
     resources = course.resources.all() if is_enrolled else []
-    assessments = course.assessments.filter(status='PUBLISHED') if is_enrolled else []
+    
+    if request.user == course.trainer:
+        assessments = course.assessments.all()
+    else:
+        assessments = course.assessments.filter(status='PUBLISHED') if is_enrolled else []
     feedbacks = course.feedbacks.select_related('user').order_by('-created_at')[:5]
+
+    # Check if trainee has earned a certificate
+    has_certificate = False
+    can_generate_certificate = False
+    
+    if request.user.role == 'TRAINEE' and is_enrolled:
+        has_certificate = Certificate.objects.filter(user=request.user, title=f"Completion: {course.title}").exists()
+        
+        if not has_certificate:
+            published_assessments = course.assessments.filter(status='PUBLISHED')
+            if published_assessments.exists():
+                passed_count = 0
+                for a in published_assessments:
+                    passed_attempt = AssessmentAttempt.objects.filter(
+                        assessment=a, 
+                        trainee=request.user, 
+                        status='SUBMITTED',
+                        score_percent__gte=a.passing_score
+                    ).exists()
+                    if passed_attempt:
+                        passed_count += 1
+                
+                if passed_count == published_assessments.count():
+                    can_generate_certificate = True
 
     return render(request, 'courses/detail.html', {
         'course': course,
@@ -57,6 +88,8 @@ def course_detail_view(request, course_id):
         'resources': resources,
         'assessments': assessments,
         'feedbacks': feedbacks,
+        'has_certificate': has_certificate,
+        'can_generate_certificate': can_generate_certificate,
     })
 
 
@@ -116,3 +149,46 @@ def trainer_dashboard_view(request):
         )
 
     return render(request, 'courses/trainer_dashboard.html', {'courses': courses})
+
+
+@login_required
+def generate_certificate_view(request, course_id):
+    """Generates a certificate for the trainee if they passed all assessments."""
+    if request.user.role != 'TRAINEE':
+        return redirect('course_detail', course_id=course_id)
+        
+    course = get_object_or_404(Course, id=course_id, is_active=True)
+    enrollment = get_object_or_404(Enrollment, course=course, trainee=request.user)
+    
+    # Validate they passed everything
+    published_assessments = course.assessments.filter(status='PUBLISHED')
+    passed_count = 0
+    for a in published_assessments:
+        passed = AssessmentAttempt.objects.filter(
+            assessment=a, trainee=request.user, status='SUBMITTED', score_percent__gte=a.passing_score
+        ).exists()
+        if passed:
+            passed_count += 1
+            
+    if published_assessments.exists() and passed_count == published_assessments.count():
+        # Generate Certificate
+        cert_title = f"Completion: {course.title}"
+        Certificate.objects.get_or_create(
+            user=request.user,
+            title=cert_title,
+            defaults={
+                'issued_by': f"Capacity Connect - {course.trainer.get_full_name()}",
+                'issued_date': timezone.now().date(),
+            }
+        )
+        
+        # Mark enrollment complete
+        enrollment.is_completed = True
+        enrollment.completed_at = timezone.now()
+        enrollment.save()
+        
+        messages.success(request, f"Congratulations! You have earned your certificate for {course.title}.")
+    else:
+        messages.error(request, "You must pass all assessments to earn this certificate.")
+        
+    return redirect('course_detail', course_id=course.id)

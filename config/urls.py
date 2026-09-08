@@ -11,8 +11,9 @@ urlpatterns = [
     path('library/', include('library.urls')),
     path('assessments/', include('assessments.urls')),
     path('feedback/', include('feedback.urls')),
-    path('', include('announcements.urls')),       # homepage lives at root /
     path('competencies/', include('competencies.urls')),
+    path('analytics/', include('analytics.urls')),
+    path('', include('announcements.urls')),       # homepage lives at root /
 ]
 
 # Serve uploaded media files during development

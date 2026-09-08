@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'competencies',
     'announcements',
     'feedback',
+    'analytics',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'

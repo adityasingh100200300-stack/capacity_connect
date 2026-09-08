@@ -27,3 +27,30 @@ class TrainerCompetency(models.Model):
 
     def __str__(self):
         return f"{self.trainer.username} — {self.skill.name} ({self.score}/5)"
+
+
+# --- Signals for auto-syncing ---
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from profiles.models import UserSkill
+
+@receiver(post_save, sender=UserSkill)
+def sync_user_skill_to_trainer_competency(sender, instance, created, **kwargs):
+    """
+    Whenever a UserSkill is saved, if the user is a TRAINER,
+    sync their proficiency score to TrainerCompetency.
+    """
+    if instance.user.role == 'TRAINER':
+        TrainerCompetency.objects.update_or_create(
+            trainer=instance.user,
+            skill=instance.skill,
+            defaults={'score': instance.proficiency}
+        )
+
+@receiver(post_delete, sender=UserSkill)
+def delete_trainer_competency(sender, instance, **kwargs):
+    """
+    If a Trainer removes a skill from their profile, remove it from the competency map.
+    """
+    if instance.user.role == 'TRAINER':
+        TrainerCompetency.objects.filter(trainer=instance.user, skill=instance.skill).delete()

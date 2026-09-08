@@ -16,11 +16,22 @@ class RegisterForm(UserCreationForm):
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name', 'role', 'password1', 'password2')
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email.endswith('@cap.com'):
+            raise forms.ValidationError("Registration is restricted to organizational members. Your email must end with '@cap.com'.")
+        return email
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        # All new registrations start as PENDING until an Admin approves
-        user.status = 'PENDING'
+        
+        # Trainees are automatically active. Trainers require admin approval.
+        if self.cleaned_data.get('role') == 'TRAINEE':
+            user.status = 'ACTIVE'
+        else:
+            user.status = 'PENDING'
+            
         if commit:
             user.save()
         return user

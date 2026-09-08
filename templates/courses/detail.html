@@ -21,6 +21,23 @@
     {% endif %}
 </div>
 
+{% if has_certificate %}
+<div class="alert alert-success mt-2">
+    <strong>🎉 Congratulations!</strong> You have earned the certificate for this course. 
+    <a href="{% url 'profile_view' %}" class="fw-bold">View in Profile</a>.
+</div>
+{% elif can_generate_certificate %}
+<div class="alert alert-info mt-2 d-flex justify-content-between align-items-center">
+    <div>
+        <strong>🎓 You did it!</strong> You have passed all assessments for this course.
+    </div>
+    <form action="{% url 'generate_certificate' course.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success btn-sm">Generate Certificate</button>
+    </form>
+</div>
+{% endif %}
+
 {% if course.description %}
 <div class="card mb-2">
     <h2 style="font-size:1rem;margin-bottom:0.5rem;">About this Course</h2>
@@ -57,7 +74,12 @@
     <!-- Assessments -->
     <div>
         <div class="card mb-2">
-            <h2 style="font-size:1rem;margin-bottom:1rem;">📝 Assessments</h2>
+            <div class="d-flex justify-between align-center mb-2">
+                <h2 style="font-size:1rem;margin-bottom:0;">📝 Assessments</h2>
+                {% if user.role == 'TRAINER' and user == course.trainer %}
+                <a href="{% url 'create_assessment' course.id %}" class="btn btn-secondary btn-sm">+ Add Assessment</a>
+                {% endif %}
+            </div>
             {% if assessments %}
                 {% for assessment in assessments %}
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
@@ -68,9 +90,15 @@
                             Pass: {{ assessment.passing_score }}%
                         </p>
                     </div>
-                    {% if user.role == 'TRAINEE' %}
-                    <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start</a>
-                    {% endif %}
+                    </div>
+                    <div>
+                        {% if user.role == 'TRAINEE' and assessment.status == 'PUBLISHED' %}
+                        <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start</a>
+                        {% endif %}
+                        {% if user == course.trainer %}
+                        <a href="{% url 'manage_assessment' assessment.id %}" class="btn btn-secondary btn-sm">Manage</a>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}

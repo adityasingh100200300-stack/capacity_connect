@@ -7,4 +7,5 @@ urlpatterns = [
     path('<int:course_id>/enroll/', views.enroll_view, name='enroll_course'),
     path('create/', views.create_course_view, name='create_course'),
     path('dashboard/', views.trainer_dashboard_view, name='trainer_dashboard'),
+    path('<int:course_id>/certificate/', views.generate_certificate_view, name='generate_certificate'),
 ]

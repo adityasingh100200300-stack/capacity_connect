@@ -217,6 +217,7 @@
                 <a href="{% url 'library_list' %}">Library</a>
             {% endif %}
             {% if user.role == 'ADMIN' %}
+                <a href="{% url 'admin_dashboard' %}">Dashboard</a>
                 <a href="{% url 'pending_users' %}">Users</a>
                 <a href="{% url 'competency_map' %}">Competencies</a>
                 <a href="{% url 'create_announcement' %}">Announce</a>
