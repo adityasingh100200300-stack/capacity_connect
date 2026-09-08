@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Create Announcement — Capacity Connect{% endblock %}
+
+{% block content %}
+<div style="max-width:640px; margin:0 auto;">
+    <div class="d-flex align-center mb-2" style="gap:0.75rem;">
+        <a href="{% url 'announcement_list' %}" class="btn btn-secondary btn-sm">← Announcements</a>
+        <h1 style="font-size:1.3rem;">Publish Announcement</h1>
+    </div>
+    <div class="card">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if field.field.widget.input_type == 'textarea' %}
+                    <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                              class="form-control" rows="5"
+                              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
+                {% elif field.field.widget.input_type == 'checkbox' %}
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem;">
+                        <input type="checkbox" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                               {% if field.value %}checked{% endif %}
+                               style="width:16px;height:16px;accent-color:var(--primary);">
+                        <span style="font-size:0.85rem;color:var(--text-muted);">Pin this announcement to the top</span>
+                    </div>
+                {% elif field.field.widget.input_type == 'select' %}
+                    <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
+                        {% for val, label in field.field.choices %}
+                        <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="{{ field.field.widget.input_type }}"
+                           name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                           class="form-control" value="{{ field.value|default:'' }}"
+                           placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+                {% endif %}
+                {% if field.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ field.errors|join:", " }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary" style="width:100%;">Publish</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Library — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-between align-center">
+    <div>
+        <h1>Learning Library</h1>
+        <p class="text-muted">All available course resources</p>
+    </div>
+    {% if user.role == 'TRAINER' %}
+    <a href="{% url 'upload_resource' %}" class="btn btn-primary">⬆ Upload Resource</a>
+    {% endif %}
+</div>
+
+{% if resources %}
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Course</th>
+                {% if user.role != 'TRAINEE' %}<th>Uploaded By</th>{% endif %}
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resource in resources %}
+            <tr>
+                <td>
+                    <p style="font-weight:500;">{{ resource.title }}</p>
+                    {% if resource.description %}<p class="text-muted" style="font-size:0.8rem;">{{ resource.description|truncatechars:60 }}</p>{% endif %}
+                </td>
+                <td>
+                    {% if resource.resource_type == 'VIDEO' %}🎥
+                    {% elif resource.resource_type == 'SLIDES' %}📊
+                    {% elif resource.resource_type == 'PDF' %}📄
+                    {% else %}📁{% endif %}
+                    <span class="text-muted" style="font-size:0.82rem;">{{ resource.get_resource_type_display }}</span>
+                </td>
+                <td class="text-muted" style="font-size:0.85rem;">{{ resource.course.title }}</td>
+                {% if user.role != 'TRAINEE' %}<td class="text-muted" style="font-size:0.85rem;">{{ resource.uploaded_by.username }}</td>{% endif %}
+                <td class="text-muted" style="font-size:0.82rem;">{{ resource.uploaded_at|date:"M d, Y" }}</td>
+                <td>
+                    <a href="{% url 'download_resource' resource.id %}" class="btn btn-secondary btn-sm">⬇ Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:2rem;">📂</p>
+    <p class="text-muted mt-1">
+        {% if user.role == 'TRAINEE' %}Enroll in courses to access their learning resources.
+        {% else %}No resources uploaded yet. Upload your first one!{% endif %}
+    </p>
+    {% if user.role == 'TRAINER' %}
+    <a href="{% url 'upload_resource' %}" class="btn btn-primary mt-2">Upload Resource</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

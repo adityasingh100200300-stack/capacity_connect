@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}User Management — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-between align-center">
+    <div>
+        <h1>User Management</h1>
+        <p class="text-muted">Approve or reject pending registrations</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="/admin/accounts/customuser/add/" class="btn btn-primary btn-sm">+ Create Admin</a>
+        <span class="badge badge-admin">Admin View</span>
+    </div>
+</div>
+
+<!-- Pending approvals -->
+<div class="card mb-2">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">
+        Pending Approvals
+        {% if pending %}
+            <span class="badge badge-trainer" style="margin-left:0.5rem;">{{ pending|length }}</span>
+        {% endif %}
+    </h2>
+
+    {% if pending %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in pending %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.get_full_name|default:'—' }}</td>
+                <td>{{ u.email }}</td>
+                <td>
+                    {% if u.role == 'TRAINER' %}
+                        <span class="badge badge-trainer">Trainer</span>
+                    {% else %}
+                        <span class="badge badge-trainee">Trainee</span>
+                    {% endif %}
+                </td>
+                <td class="text-muted" style="font-size:0.85rem;">{{ u.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <form method="post" action="{% url 'update_user_status' u.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="ACTIVE">
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form method="post" action="{% url 'update_user_status' u.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="REJECTED">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted" style="text-align:center; padding: 1.5rem 0;">✓ No pending approvals</p>
+    {% endif %}
+</div>
+
+<!-- All users -->
+<div class="card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">All Users</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in all_users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.get_full_name|default:'—' }}</td>
+                <td>
+                    {% if u.role == 'ADMIN' %}
+                        <span class="badge badge-admin">Admin</span>
+                    {% elif u.role == 'TRAINER' %}
+                        <span class="badge badge-trainer">Trainer</span>
+                    {% else %}
+                        <span class="badge badge-trainee">Trainee</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if u.status == 'ACTIVE' %}
+                        <span class="text-success">● Active</span>
+                    {% elif u.status == 'PENDING' %}
+                        <span class="text-warning">● Pending</span>
+                    {% elif u.status == 'SUSPENDED' %}
+                        <span class="text-danger">● Suspended</span>
+                    {% else %}
+                        <span class="text-muted">● {{ u.get_status_display }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{% url 'update_user_status' u.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <select name="status" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.25rem 0.5rem;border-radius:5px;font-size:0.8rem;">
+                            <option value="ACTIVE"    {% if u.status == 'ACTIVE'    %}selected{% endif %}>Active</option>
+                            <option value="PENDING"   {% if u.status == 'PENDING'   %}selected{% endif %}>Pending</option>
+                            <option value="REJECTED"  {% if u.status == 'REJECTED'  %}selected{% endif %}>Rejected</option>
+                            <option value="SUSPENDED" {% if u.status == 'SUSPENDED' %}selected{% endif %}>Suspended</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary btn-sm">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
