@@ -16,11 +16,14 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(
-                request,
-                'Account created! An administrator will review and approve your account shortly.'
-            )
+            user = form.save()
+            if user.role == 'TRAINEE':
+                messages.success(request, 'Account created! You can now log in.')
+            else:
+                messages.success(
+                    request,
+                    'Account created! An administrator will review and approve your account shortly.'
+                )
             return redirect('login')
     else:
         form = RegisterForm()
