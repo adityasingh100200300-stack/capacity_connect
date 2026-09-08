@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Result — {{ attempt.assessment.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:540px; margin: 2rem auto;">
+    <div class="card" style="text-align:center;padding:2.5rem;">
+
+        {% if attempt.status == 'EXPIRED' %}
+            <p style="font-size:3rem;">⏰</p>
+            <h1 style="font-size:1.5rem;color:var(--danger);margin-top:0.5rem;">Time Expired</h1>
+            <p class="text-muted mt-1">Your time ran out before submission.</p>
+        {% elif attempt.score_percent >= attempt.assessment.passing_score %}
+            <p style="font-size:3rem;">🎉</p>
+            <h1 style="font-size:1.5rem;color:var(--success);margin-top:0.5rem;">Passed!</h1>
+        {% else %}
+            <p style="font-size:3rem;">📉</p>
+            <h1 style="font-size:1.5rem;color:var(--danger);margin-top:0.5rem;">Not Passed</h1>
+        {% endif %}
+
+        <div style="margin:1.75rem 0;">
+            <p class="text-muted" style="font-size:0.85rem;">Your Score</p>
+            <p style="font-size:4rem;font-weight:800;line-height:1;
+                {% if attempt.status == 'EXPIRED' %}color:var(--text-muted);
+                {% elif attempt.score_percent >= attempt.assessment.passing_score %}color:var(--success);
+                {% else %}color:var(--danger);{% endif %}">
+                {{ attempt.score_percent|floatformat:0 }}%
+            </p>
+            <p class="text-muted" style="font-size:0.82rem;">Passing score: {{ attempt.assessment.passing_score }}%</p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;margin-bottom:1.5rem;text-align:left;">
+            <p style="font-size:0.85rem;font-weight:600;margin-bottom:0.6rem;">Assessment Details</p>
+            <p class="text-muted" style="font-size:0.82rem;">📝 {{ attempt.assessment.title }}</p>
+            <p class="text-muted" style="font-size:0.82rem;margin-top:0.25rem;">
+                🕐 Started: {{ attempt.started_at|date:"M d, Y H:i" }}
+            </p>
+            {% if attempt.submitted_at %}
+            <p class="text-muted" style="font-size:0.82rem;margin-top:0.25rem;">
+                ✅ Submitted: {{ attempt.submitted_at|date:"M d, Y H:i" }}
+            </p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'course_detail' attempt.assessment.course.id %}" class="btn btn-primary" style="width:100%;">
+            Back to Course
+        </a>
+    </div>
+</div>
+{% endblock %}

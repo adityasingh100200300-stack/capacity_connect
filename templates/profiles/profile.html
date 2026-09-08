@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}{{ target_user.get_full_name|default:target_user.username }} — Profile{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-between align-center mb-2">
+    <div style="display:flex; gap:1.25rem; align-items:center;">
+        {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="Avatar"
+                 style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border);">
+        {% else %}
+            <div style="width:72px;height:72px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.75rem;">
+                {{ target_user.first_name|first|upper }}{{ target_user.last_name|first|upper }}
+            </div>
+        {% endif %}
+        <div>
+            <h1 style="font-size:1.5rem;">{{ target_user.get_full_name|default:target_user.username }}</h1>
+            <p class="text-muted">{{ profile.department }}{% if profile.department and target_user.email %} · {% endif %}{{ target_user.email }}</p>
+            {% if target_user.role == 'TRAINER' %}<span class="badge badge-trainer mt-1">Trainer</span>
+            {% elif target_user.role == 'ADMIN' %}<span class="badge badge-admin mt-1">Admin</span>
+            {% else %}<span class="badge badge-trainee mt-1">Trainee</span>{% endif %}
+        </div>
+    </div>
+    {% if is_own_profile %}
+    <div style="display:flex; gap:0.5rem;">
+        <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+        <a href="{% url 'add_skill' %}" class="btn btn-secondary">+ Skill</a>
+        <a href="{% url 'add_certificate' %}" class="btn btn-secondary">+ Certificate</a>
+        <a href="{% url 'add_experience' %}" class="btn btn-secondary">+ Experience</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="grid-2" style="align-items:start;">
+    <!-- Left column -->
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+        <!-- Bio -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">About</h2>
+            {% if profile.bio %}
+                <p style="line-height:1.7;">{{ profile.bio }}</p>
+            {% else %}
+                <p class="text-muted">No bio added yet.</p>
+            {% endif %}
+            {% if profile.phone %}<p class="mt-1 text-muted" style="font-size:0.85rem;">📞 {{ profile.phone }}</p>{% endif %}
+            {% if profile.linkedin_url %}<p class="mt-1" style="font-size:0.85rem;"><a href="{{ profile.linkedin_url }}" target="_blank" style="color:var(--primary);">LinkedIn ↗</a></p>{% endif %}
+        </div>
+
+        <!-- Skills -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">Skills</h2>
+            {% if user_skills %}
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                    {% for us in user_skills %}
+                    <div style="background:var(--surface2);border:1px solid var(--border);padding:0.35rem 0.75rem;border-radius:99px;font-size:0.82rem;display:flex;align-items:center;gap:0.5rem;">
+                        <span>{{ us.skill.name }}</span>
+                        <span class="text-muted" style="font-size:0.75rem;">{{ us.get_proficiency_display }}</span>
+                        {% if is_own_profile %}
+                        <a href="{% url 'delete_skill' us.id %}" style="color:var(--danger);text-decoration:none;font-size:0.7rem;">✕</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No skills listed yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Right column -->
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+        <!-- Work Experience -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">Work Experience</h2>
+            {% if experiences %}
+                {% for exp in experiences %}
+                <div style="border-left:3px solid var(--primary);padding-left:1rem;margin-bottom:1rem;">
+                    <p style="font-weight:600;">{{ exp.role }}</p>
+                    <p class="text-muted" style="font-size:0.85rem;">{{ exp.company }}</p>
+                    <p class="text-muted" style="font-size:0.8rem;">
+                        {{ exp.start_date|date:"M Y" }} – {% if exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}
+                    </p>
+                    {% if exp.description %}<p style="font-size:0.85rem;margin-top:0.4rem;line-height:1.6;">{{ exp.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No experience added yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Certificates -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">Certificates</h2>
+            {% if certificates %}
+                {% for cert in certificates %}
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                    <div>
+                        <p style="font-weight:500;">{{ cert.title }}</p>
+                        <p class="text-muted" style="font-size:0.82rem;">{{ cert.issued_by }} · {{ cert.issued_date|date:"M Y" }}</p>
+                    </div>
+                    {% if cert.file %}
+                    <a href="{{ cert.file.url }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No certificates added yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Competency Map — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Competency Map</h1>
+    <p class="text-muted">Trainer skills and proficiency levels — use this to match trainers to subjects</p>
+</div>
+
+{% if matrix %}
+<div class="card" style="overflow-x:auto;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trainer</th>
+                {% for skill in skills %}
+                <th style="font-size:0.8rem;white-space:nowrap;">{{ skill.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in matrix %}
+            <tr>
+                <td>
+                    <a href="{% url 'profile_view_user' row.trainer.id %}" style="color:var(--primary);text-decoration:none;">
+                        {{ row.trainer.get_full_name|default:row.trainer.username }}
+                    </a>
+                </td>
+                {% for skill in skills %}
+                <td style="text-align:center;">
+                    {% with level=row.skills|default_if_none:'' %}
+                        {% if skill.name in row.skills %}
+                            {% with score=row.skills|get_item:skill.name %}
+                            <span style="display:inline-block;width:28px;height:28px;border-radius:50%;line-height:28px;font-size:0.78rem;font-weight:700;
+                                {% if score >= 4 %}background:#05966933;color:#34d399;border:1px solid #05966966;
+                                {% elif score == 3 %}background:#0891b233;color:#22d3ee;border:1px solid #0891b266;
+                                {% else %}background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+                                {{ score }}
+                            </span>
+                            {% endwith %}
+                        {% else %}
+                            <span class="text-muted" style="font-size:0.8rem;">—</span>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="text-muted mt-2" style="font-size:0.78rem;">
+        Score: <span style="color:#34d399;">4–5</span> Expert/Advanced &nbsp;·&nbsp;
+        <span style="color:#22d3ee;">3</span> Intermediate &nbsp;·&nbsp;
+        1–2 Beginner/Elementary
+    </p>
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:2rem;">🗺️</p>
+    <p class="text-muted mt-1">No trainers or skills found yet.</p>
+    <p class="text-muted" style="font-size:0.85rem;margin-top:0.35rem;">Trainers need to add skills to their profiles for the map to populate.</p>
+</div>
+{% endif %}
+{% endblock %}

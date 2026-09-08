@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Courses — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-between align-center">
+    <div>
+        <h1>Courses</h1>
+        <p class="text-muted">Browse and enroll in available training courses</p>
+    </div>
+    {% if user.role == 'TRAINER' or user.role == 'ADMIN' %}
+    <a href="{% url 'create_course' %}" class="btn btn-primary">+ New Course</a>
+    {% endif %}
+</div>
+
+{% if courses %}
+<div class="grid-3">
+    {% for course in courses %}
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:1rem;">
+        <div>
+            <h2 style="font-size:1.05rem;margin-bottom:0.4rem;">{{ course.title }}</h2>
+            <p class="text-muted" style="font-size:0.85rem;line-height:1.6;">{{ course.description|truncatechars:120 }}</p>
+            <p class="text-muted mt-1" style="font-size:0.78rem;">
+                👤 {{ course.trainer.get_full_name|default:course.trainer.username }} &nbsp;·&nbsp;
+                📋 {{ course.enrollment_count }} enrolled
+            </p>
+        </div>
+        <div class="d-flex gap-1">
+            <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary btn-sm">View</a>
+            {% if user.role == 'TRAINEE' %}
+                {% if course.id in enrolled_ids %}
+                    <span class="btn btn-sm" style="background:var(--success)22;color:var(--success);border:1px solid var(--success)44;cursor:default;">✓ Enrolled</span>
+                {% else %}
+                    <form method="post" action="{% url 'enroll_course' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Enroll</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:1.5rem;">📚</p>
+    <p class="text-muted mt-1">No courses available yet.</p>
+    {% if user.role == 'TRAINER' %}
+    <a href="{% url 'create_course' %}" class="btn btn-primary mt-2">Create your first course</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

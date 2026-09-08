@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="d-flex align-center mb-2" style="gap:0.75rem;">
+    <a href="{% url 'course_list' %}" class="btn btn-secondary btn-sm">← All Courses</a>
+</div>
+
+<div class="page-header d-flex justify-between align-center">
+    <div>
+        <h1>{{ course.title }}</h1>
+        <p class="text-muted">By {{ course.trainer.get_full_name|default:course.trainer.username }}</p>
+    </div>
+    {% if user.role == 'TRAINEE' and not is_enrolled %}
+    <form method="post" action="{% url 'enroll_course' course.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Enroll Now</button>
+    </form>
+    {% elif user.role == 'TRAINEE' and is_enrolled %}
+    <span class="btn" style="background:var(--success)22;color:var(--success);border:1px solid var(--success)44;cursor:default;">✓ Enrolled</span>
+    {% endif %}
+</div>
+
+{% if course.description %}
+<div class="card mb-2">
+    <h2 style="font-size:1rem;margin-bottom:0.5rem;">About this Course</h2>
+    <p style="line-height:1.75;">{{ course.description }}</p>
+</div>
+{% endif %}
+
+{% if is_enrolled %}
+<div class="grid-2" style="align-items:start;">
+
+    <!-- Resources -->
+    <div class="card">
+        <div class="d-flex justify-between align-center mb-2">
+            <h2 style="font-size:1rem;">📁 Learning Resources</h2>
+            {% if user.role == 'TRAINER' and user == course.trainer %}
+            <a href="{% url 'upload_resource' %}?course={{ course.id }}" class="btn btn-secondary btn-sm">Upload</a>
+            {% endif %}
+        </div>
+        {% if resources %}
+            {% for resource in resources %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                <div>
+                    <p style="font-size:0.9rem;font-weight:500;">{{ resource.title }}</p>
+                    <p class="text-muted" style="font-size:0.78rem;">{{ resource.get_resource_type_display }}</p>
+                </div>
+                <a href="{% url 'download_resource' resource.id %}" class="btn btn-secondary btn-sm">⬇ Download</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted" style="text-align:center;padding:1rem 0;">No resources uploaded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Assessments -->
+    <div>
+        <div class="card mb-2">
+            <h2 style="font-size:1rem;margin-bottom:1rem;">📝 Assessments</h2>
+            {% if assessments %}
+                {% for assessment in assessments %}
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                    <div>
+                        <p style="font-size:0.9rem;font-weight:500;">{{ assessment.title }}</p>
+                        <p class="text-muted" style="font-size:0.78rem;">
+                            ⏱ {{ assessment.duration_minutes }} min &nbsp;·&nbsp;
+                            Pass: {{ assessment.passing_score }}%
+                        </p>
+                    </div>
+                    {% if user.role == 'TRAINEE' %}
+                    <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted" style="text-align:center;padding:1rem 0;">No assessments published yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Feedback -->
+        <div class="card">
+            <div class="d-flex justify-between align-center mb-2">
+                <h2 style="font-size:1rem;">💬 Recent Feedback</h2>
+                {% if user.role == 'TRAINEE' and is_enrolled %}
+                <a href="{% url 'submit_feedback' course.id %}" class="btn btn-secondary btn-sm">Leave Feedback</a>
+                {% endif %}
+            </div>
+            {% if feedbacks %}
+                {% for fb in feedbacks %}
+                <div style="padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                    <div class="d-flex justify-between align-center">
+                        <p style="font-size:0.85rem;font-weight:500;">{{ fb.user.get_full_name|default:fb.user.username }}</p>
+                        <span style="color:var(--warning);">
+                            {% for i in "12345" %}{% if forloop.counter <= fb.rating %}★{% else %}☆{% endif %}{% endfor %}
+                        </span>
+                    </div>
+                    {% if fb.comment %}<p class="text-muted" style="font-size:0.82rem;margin-top:0.2rem;">{{ fb.comment }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted" style="text-align:center;padding:1rem 0;">No feedback yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:2rem;">🔒</p>
+    <p class="text-muted mt-1">Enroll in this course to access resources and assessments.</p>
+</div>
+{% endif %}
+{% endblock %}

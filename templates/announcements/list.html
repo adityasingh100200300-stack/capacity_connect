@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Announcements — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-between align-center">
+    <div>
+        <h1>Announcements</h1>
+        <p class="text-muted">Platform news, achievements, and updates</p>
+    </div>
+    {% if user.is_authenticated and user.role == 'ADMIN' %}
+    <a href="{% url 'create_announcement' %}" class="btn btn-primary">+ Announce</a>
+    {% endif %}
+</div>
+
+{% if announcements %}
+    {% for ann in announcements %}
+    <div class="card mb-1" style="border-left: 3px solid
+        {% if ann.announcement_type == 'ACHIEVEMENT' %}var(--warning)
+        {% elif ann.announcement_type == 'CONTENT' %}var(--secondary)
+        {% elif ann.announcement_type == 'NOTIFICATION' %}var(--primary)
+        {% else %}var(--border){% endif %};">
+        <div class="d-flex justify-between align-center">
+            <div style="display:flex;align-items:center;gap:0.6rem;">
+                {% if ann.is_pinned %}<span title="Pinned" style="font-size:0.85rem;">📌</span>{% endif %}
+                <span style="font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
+                    {% if ann.announcement_type == 'ACHIEVEMENT' %}background:#d9770622;color:#fbbf24;
+                    {% elif ann.announcement_type == 'CONTENT' %}background:#0891b222;color:#22d3ee;
+                    {% elif ann.announcement_type == 'NOTIFICATION' %}background:#4f46e522;color:#a78bfa;
+                    {% else %}background:var(--surface2);color:var(--text-muted);{% endif %}">
+                    {{ ann.get_announcement_type_display }}
+                </span>
+                <h2 style="font-size:1rem;">{{ ann.title }}</h2>
+            </div>
+            <span class="text-muted" style="font-size:0.78rem;white-space:nowrap;">{{ ann.created_at|date:"M d, Y" }}</span>
+        </div>
+        <p style="margin-top:0.6rem;line-height:1.7;color:var(--text);">{{ ann.body }}</p>
+        {% if ann.created_by %}
+        <p class="text-muted mt-1" style="font-size:0.78rem;">— {{ ann.created_by.get_full_name|default:ann.created_by.username }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:2rem;">📢</p>
+    <p class="text-muted mt-1">No announcements yet.</p>
+    {% if user.is_authenticated and user.role == 'ADMIN' %}
+    <a href="{% url 'create_announcement' %}" class="btn btn-primary mt-2">Publish first announcement</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
