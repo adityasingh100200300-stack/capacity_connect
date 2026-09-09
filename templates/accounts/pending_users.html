@@ -23,6 +23,7 @@
     </h2>
 
     {% if pending %}
+    <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
@@ -66,6 +67,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% else %}
         <p class="text-muted" style="text-align:center; padding: 1.5rem 0;">✓ No pending approvals</p>
     {% endif %}
@@ -74,6 +76,7 @@
 <!-- All users -->
 <div class="card">
     <h2 style="font-size:1.1rem; margin-bottom:1rem;">All Users</h2>
+    <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
@@ -125,5 +128,6 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 </div>
 {% endblock %}
