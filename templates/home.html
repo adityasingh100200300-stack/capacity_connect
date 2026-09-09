@@ -8,6 +8,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+    <script>
+        // Apply saved/preferred theme before first paint (avoids a flash of the wrong theme).
+        // Uses the same localStorage key as base.html so the choice carries across every page.
+        (function() {
+            const saved = localStorage.getItem('theme');
+            const theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,6 +35,19 @@
             --text: #eae8f4;
             --muted: #7b7990;
             --radius: 12px;
+            --nav-glass: #0d0c1acc;
+            --ann-grad: linear-gradient(90deg, #0d0c1a 0%, #141228 50%, #0d0c1a 100%);
+        }
+
+        :root[data-theme="light"] {
+            --bg: #f7f7fb;
+            --surface: #ffffff;
+            --surface2: #f0f0f6;
+            --border: #e1e0ea;
+            --text: #16151f;
+            --muted: #63607a;
+            --nav-glass: #ffffffcc;
+            --ann-grad: linear-gradient(90deg, #ffffff 0%, #eef0fa 50%, #ffffff 100%);
         }
 
         html { scroll-behavior: smooth; }
@@ -35,6 +58,8 @@
             color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         a { text-decoration: none; }
@@ -43,8 +68,8 @@
            ANNOUNCEMENT TICKER BAR
         ──────────────────────────────────────────── */
         #ann-bar {
-            background: linear-gradient(90deg, #0d0c1a 0%, #141228 50%, #0d0c1a 100%);
-            border-bottom: 1px solid #2b2940;
+            background: var(--ann-grad);
+            border-bottom: 1px solid var(--border);
             padding: 0.6rem 1.5rem;
             display: flex;
             align-items: center;
@@ -107,13 +132,13 @@
             flex-shrink: 0;
             width: 1px;
             height: 16px;
-            background: #252436;
+            background: var(--border);
         }
 
         .ann-content {
             flex: 1;
             font-size: 0.83rem;
-            color: #b8b5cc;
+            color: var(--muted);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -148,10 +173,10 @@
            NAVBAR
         ──────────────────────────────────────────── */
         nav {
-            background: #0d0c1acc;
+            background: var(--nav-glass);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid #25243680;
+            border-bottom: 1px solid var(--border);
             padding: 0 2.5rem;
             display: flex;
             align-items: center;
@@ -170,6 +195,7 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
+            flex-shrink: 0;
         }
         .nav-brand span { background: linear-gradient(135deg, #818cf8, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
@@ -181,16 +207,50 @@
             font-size: 0.875rem;
             font-weight: 500;
             transition: all 0.15s;
+            white-space: nowrap;
         }
-        .nav-links a:hover { color: var(--text); background: #1c1b2e; }
+        .nav-links a:hover { color: var(--text); background: var(--surface2); }
 
-        .nav-actions { display: flex; gap: 0.6rem; align-items: center; }
+        .nav-actions { display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; }
 
-        .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.18s; border: none; }
+        .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.18s; border: none; white-space: nowrap; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
         .btn-outline:hover { border-color: var(--primary); background: #4f46e510; }
         .btn-primary-sm { background: var(--primary); color: #fff; box-shadow: 0 2px 12px #4f46e535; }
         .btn-primary-sm:hover { background: var(--primary-dark); box-shadow: 0 4px 20px #4f46e550; }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: border-color 0.15s;
+        }
+        .theme-toggle:hover { border-color: var(--primary); }
+
+        /* Mobile nav toggle */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
         /* ────────────────────────────────────────────
            HERO
@@ -225,6 +285,90 @@
         }
 
         .hero-inner { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; }
+
+        /* ── Floating accent orbs — ambient, theme-agnostic (uses accent vars, not bg/text) ── */
+        .hero-orbs {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0.6;
+            animation: orb-float 9s ease-in-out infinite;
+        }
+        .orb-1 { width: 14px; height: 14px; top: 20%; left: 8%;  background: radial-gradient(circle at 30% 30%, var(--primary), transparent 70%); animation-duration: 8s; }
+        .orb-2 { width: 10px; height: 10px; top: 34%; right: 10%; background: radial-gradient(circle at 30% 30%, var(--cyan), transparent 70%);   animation-duration: 10s; animation-delay: -3s; }
+        .orb-3 { width: 8px;  height: 8px;  bottom: 24%; left: 15%; background: radial-gradient(circle at 30% 30%, var(--green), transparent 70%); animation-duration: 7s;  animation-delay: -1.5s; }
+        .orb-4 { width: 16px; height: 16px; bottom: 18%; right: 7%; background: radial-gradient(circle at 30% 30%, var(--primary), transparent 70%); animation-duration: 11s; animation-delay: -5s; }
+
+        .orb-ring {
+            position: absolute;
+            top: 12%;
+            right: 22%;
+            width: 64px;
+            height: 64px;
+            border: 1.5px dashed var(--border);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: orb-spin 40s linear infinite;
+        }
+
+        @keyframes orb-float {
+            0%, 100% { transform: translate(0, 0); }
+            50%      { transform: translate(6px, -18px); }
+        }
+        @keyframes orb-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .orb, .orb-ring { animation: none; }
+        }
+        @media (max-width: 720px) {
+            .orb-4, .orb-ring { display: none; }
+        }
+
+        /* ── Bottom wave divider — two layers drifting at different speeds ── */
+        .hero-waves {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 70px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+        }
+        .wave-back {
+            fill: var(--primary);
+            opacity: 0.07;
+            animation: wave-drift 22s linear infinite;
+        }
+        .wave-front {
+            fill: var(--cyan);
+            opacity: 0.09;
+            animation: wave-drift 15s linear infinite reverse;
+        }
+        @keyframes wave-drift {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .wave { animation: none; }
+        }
 
         .hero-eyebrow {
             display: inline-flex;
@@ -339,6 +483,7 @@
             padding: 2rem 1.5rem;
             text-align: center;
             border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             position: relative;
         }
         .stat-cell:last-child { border-right: none; }
@@ -438,12 +583,12 @@
         .feature-list { list-style: none; padding: 0; }
         .feature-list li {
             font-size: 0.82rem;
-            color: #c4c2d6;
+            color: var(--text);
             padding: 0.38rem 0;
             display: flex;
             align-items: center;
             gap: 0.55rem;
-            border-bottom: 1px solid #1a1929;
+            border-bottom: 1px solid var(--border);
         }
         .feature-list li:last-child { border-bottom: none; }
 
@@ -489,7 +634,7 @@
         .dot-content      { background: #06b6d4; }
         .dot-notification { background: #4f46e5; }
 
-        .ann-row-content { flex: 1; }
+        .ann-row-content { flex: 1; min-width: 0; }
         .ann-row-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.2rem; }
         .ann-row-body  { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
         .ann-row-meta  { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
@@ -523,16 +668,168 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
             font-size: 0.78rem;
             color: var(--muted);
         }
         footer a { color: var(--muted); }
         footer a:hover { color: var(--text); }
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
 
+        /* ════════════════════════════════════════════
+           RESPONSIVE BREAKPOINTS
+        ════════════════════════════════════════════ */
+
+        /* Tablet */
         @media (max-width: 900px) {
-            .roles-grid, .stats-strip { grid-template-columns: 1fr; }
-            .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
-            .stat-cell:last-child { border-bottom: none; }
+            .roles-grid { grid-template-columns: 1fr; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .stat-cell { border-right: 1px solid var(--border); }
+            .stat-cell:nth-child(2n) { border-right: none; }
+        }
+
+        /* Mobile nav + spacing */
+       /* Mobile nav + spacing */
+@media (max-width: 720px) {
+    nav {
+        padding: 0 1rem;
+        height: 56px;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .nav-brand {
+        min-width: 0;
+        flex-shrink: 1;
+        white-space: nowrap;
+    }
+
+    .nav-brand span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    /* Keep only theme + hamburger visible in the compact mobile header */
+    .nav-actions > .btn {
+        display: none;
+    }
+
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+
+    .nav-toggle {
+        display: flex;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        padding: 0;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 56px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100vw;
+
+        flex-direction: column;
+        gap: 0.15rem;
+
+        background: var(--nav-glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem;
+
+        transform: translateY(-8px);
+        opacity: 0;
+        pointer-events: none;
+
+        transition:
+            transform 0.18s ease,
+            opacity 0.18s ease;
+    }
+
+    .nav-links.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .nav-links a {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border-radius: 8px;
+    }
+
+    .hero {
+        padding: 3rem 1.25rem 3rem;
+    }
+
+    .hero-sub {
+        font-size: 0.95rem;
+    }
+
+    .hero-actions {
+        margin-bottom: 2.25rem;
+    }
+
+    .trust-badges {
+        gap: 0.6rem 1rem;
+    }
+
+    .section {
+        padding: 3rem 1.25rem;
+    }
+
+    .ann-preview-section {
+        padding: 2.75rem 1.25rem;
+    }
+
+    .cta-section {
+        padding: 3.5rem 1.25rem;
+    }
+
+    .stats-strip {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-cell {
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-num {
+        font-size: 1.7rem;
+    }
+
+    footer {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+}
+
+        /* Small phones */
+        @media (max-width: 420px) {
+            .stats-strip { grid-template-columns: 1fr; }
+            .stat-cell { border-right: none !important; }
+            .btn-hero { width: 100%; justify-content: center; }
+            .hero-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -561,7 +858,7 @@
 <nav>
     <a href="/" class="nav-brand">⚡ <span>Capacity</span> Connect</a>
 
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
         <a href="{% url 'announcement_list' %}">Announcements</a>
         <a href="{% url 'course_list' %}">Courses</a>
         {% if user.is_authenticated %}
@@ -571,18 +868,20 @@
     </div>
 
     <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark theme">🌙</button>
         {% if user.is_authenticated %}
             <a href="{% if user.role == 'TRAINEE' %}{% url 'profile_view' %}{% elif user.role == 'TRAINER' %}{% url 'trainer_dashboard' %}{% else %}{% url 'pending_users' %}{% endif %}"
                class="btn btn-outline">
-                {% if user.role == 'ADMIN' %}🛡 Admin
-                {% elif user.role == 'TRAINER' %}🎓 Trainer
-                {% else %}👤 My Profile{% endif %}
+                {% if user.role == 'ADMIN' %}🛡 <span class="label-full">Admin</span>
+                {% elif user.role == 'TRAINER' %}🎓 <span class="label-full">Trainer</span>
+                {% else %}👤 <span class="label-full">My Profile</span>{% endif %}
             </a>
             <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
         {% else %}
             <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
             <a href="{% url 'register' %}" class="btn btn-primary-sm">Get Started →</a>
         {% endif %}
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
     </div>
 </nav>
 
@@ -592,6 +891,14 @@
 <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
+
+    <div class="hero-orbs">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+        <span class="orb orb-4"></span>
+        <span class="orb-ring"></span>
+    </div>
 
     <div class="hero-inner">
         <div class="hero-eyebrow">
@@ -636,6 +943,15 @@
             <span class="trust-badge"><span class="icon">⚡</span> Real-time Assessments</span>
             <span class="trust-badge"><span class="icon">📊</span> Admin Analytics</span>
         </div>
+    </div>
+
+    <div class="hero-waves" aria-hidden="true">
+        <svg class="wave wave-back" viewBox="0 0 1600 120" preserveAspectRatio="none">
+            <path d="M0,60 C100,20 300,100 400,60 C500,20 700,100 800,60 C900,20 1100,100 1200,60 C1300,20 1500,100 1600,60 L1600,120 L0,120 Z"/>
+        </svg>
+        <svg class="wave wave-front" viewBox="0 0 1600 120" preserveAspectRatio="none">
+            <path d="M0,60 C100,100 300,20 400,60 C500,100 700,20 800,60 C900,100 1100,20 1200,60 C1300,100 1500,20 1600,60 L1600,120 L0,120 Z"/>
+        </svg>
     </div>
 </section>
 
@@ -784,7 +1100,7 @@
 ══════════════════════════════════════════════ -->
 <footer>
     <span>⚡ Capacity Connect &copy; 2026</span>
-    <div style="display:flex;gap:1.5rem;">
+    <div class="footer-links">
         <a href="{% url 'announcement_list' %}">Announcements</a>
         <a href="{% url 'course_list' %}">Courses</a>
         <a href="{% url 'register' %}">Sign Up</a>
@@ -803,6 +1119,41 @@
             bar.style.padding = '0';
             bar.style.overflow = 'hidden';
         }, 20000);
+    }
+
+    // Theme toggle — same localStorage key as base.html, so the choice holds across pages
+    (function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (!themeToggle) return;
+        const setIcon = () => {
+            themeToggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+        };
+        setIcon();
+        themeToggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            setIcon();
+        });
+    })();
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            const isOpen = navLinks.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', isOpen);
+            navToggle.textContent = isOpen ? '✕' : '☰';
+        });
+        // Close menu when a link is tapped
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('open');
+                navToggle.setAttribute('aria-expanded', 'false');
+                navToggle.textContent = '☰';
+            });
+        });
     }
 </script>
 

@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Capacity Connect{% endblock %}</title>
+
+    <script>
+        // Apply saved/preferred theme before first paint (avoids a flash of the wrong theme)
+        (function() {
+            const saved = localStorage.getItem('theme');
+            const theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,22 +33,41 @@
             --radius: 10px;
         }
 
+        :root[data-theme="light"] {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0891b2;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg: #f7f7fb;
+            --surface: #ffffff;
+            --surface2: #f0f0f6;
+            --border: #e1e0ea;
+            --text: #16151f;
+            --text-muted: #63607a;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         /* ── Navbar ── */
         nav {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
+            padding: 0.6rem 2rem;
             display: flex;
+            flex-wrap: wrap;
+            row-gap: 0.4rem;
             align-items: center;
             justify-content: space-between;
-            height: 60px;
+            min-height: 60px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -50,12 +79,15 @@
             color: var(--primary);
             text-decoration: none;
             letter-spacing: -0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .nav-links {
             display: flex;
             gap: 0.25rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
@@ -76,7 +108,26 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .theme-toggle:hover { border-color: var(--primary); }
 
         .badge {
             padding: 0.2rem 0.6rem;
@@ -163,7 +214,8 @@
 
         /* ── Tables ── */
         .table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        .table th { text-align: left; padding: 0.75rem 1rem; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table th { text-align: left; padding: 0.75rem 1rem; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); white-space: nowrap; }
         .table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
         .table tr:hover td { background: var(--surface2); }
         .table tr:last-child td { border-bottom: none; }
@@ -181,6 +233,7 @@
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             nav { padding: 0 1rem; }
             .nav-links a { padding: 0.4rem 0.5rem; font-size: 0.8rem; }
+            .page-header.d-flex { flex-wrap: wrap; row-gap: 0.75rem; }
         }
 
         /* ── Misc ── */
@@ -226,6 +279,7 @@
     </div>
 
     <div class="nav-user">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme" type="button">🌙</button>
         {% if user.is_authenticated %}
             {% if user.role == 'ADMIN' %}
                 <span class="badge badge-admin">Admin</span>
@@ -250,6 +304,24 @@
 
     {% block content %}{% endblock %}
 </div>
+
+<script>
+    // Theme toggle — persists choice, works on every page that extends base.html
+    (function() {
+        const toggle = document.getElementById('themeToggle');
+        if (!toggle) return;
+        const setIcon = () => {
+            toggle.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+        };
+        setIcon();
+        toggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            setIcon();
+        });
+    })();
+</script>
 
 {% block extra_js %}{% endblock %}
 </body>

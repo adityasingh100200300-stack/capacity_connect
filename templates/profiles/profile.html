@@ -2,7 +2,7 @@
 {% block title %}{{ target_user.get_full_name|default:target_user.username }} — Profile{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-between align-center mb-2">
+<div class="d-flex justify-between align-center mb-2" style="flex-wrap:wrap; row-gap:1rem;">
     <div style="display:flex; gap:1.25rem; align-items:center;">
         {% if profile.avatar %}
             <img src="{{ profile.avatar.url }}" alt="Avatar"
@@ -21,7 +21,7 @@
         </div>
     </div>
     {% if is_own_profile %}
-    <div style="display:flex; gap:0.5rem;">
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
         <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
         <a href="{% url 'add_skill' %}" class="btn btn-secondary">+ Skill</a>
         <a href="{% url 'add_certificate' %}" class="btn btn-secondary">+ Certificate</a>
