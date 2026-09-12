@@ -9,6 +9,12 @@ from .forms import CourseForm
 from assessments.models import AssessmentAttempt
 from profiles.models import Certificate
 
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+ 
+from .models import Course, Doubt
 
 @login_required
 def course_list_view(request):
@@ -192,3 +198,56 @@ def generate_certificate_view(request, course_id):
         messages.error(request, "You must pass all assessments to earn this certificate.")
         
     return redirect('course_detail', course_id=course.id)
+
+def _can_comment(user, doubt):
+    """Only the trainee who raised the doubt, or the course's trainer, may reply."""
+    if user.id == doubt.trainee_id:
+        return True
+    if user.role == 'TRAINER' and user.id == doubt.course.trainer_id:
+        return True
+    return False
+ 
+ 
+@login_required
+def doubt_list(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    doubts = course.doubts.select_related('trainee')
+    return render(request, 'doubts/doubt_list.html', {'course': course, 'doubts': doubts})
+ 
+ 
+@login_required
+def create_doubt(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.user.role != 'TRAINEE':
+        return HttpResponseForbidden("Only trainees can raise a doubt.")
+ 
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        body = request.POST.get('body', '').strip()
+        if title and body:
+            Doubt.objects.create(course=course, trainee=request.user, title=title, body=body)
+            messages.success(request, "Your doubt has been posted.")
+            return redirect('doubt_list', course_id=course.id)
+        messages.error(request, "Fill in both a title and a description.")
+ 
+    return render(request, 'doubts/create_doubt.html', {'course': course})
+ 
+ 
+@login_required
+def doubt_detail(request, doubt_id):
+    doubt = get_object_or_404(Doubt, id=doubt_id)
+    can_comment = _can_comment(request.user, doubt)
+ 
+    if request.method == 'POST':
+        if not can_comment:
+            return HttpResponseForbidden("You can't comment on this doubt.")
+        body = request.POST.get('body', '').strip()
+        if body:
+            doubt.comments.create(author=request.user, body=body)
+            return redirect('doubt_detail', doubt_id=doubt.id)
+ 
+    return render(request, 'doubts/doubt_detail.html', {
+        'doubt': doubt,
+        'comments': doubt.comments.select_related('author'),
+        'can_comment': can_comment,
+    })

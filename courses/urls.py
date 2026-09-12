@@ -8,4 +8,7 @@ urlpatterns = [
     path('create/', views.create_course_view, name='create_course'),
     path('dashboard/', views.trainer_dashboard_view, name='trainer_dashboard'),
     path('<int:course_id>/certificate/', views.generate_certificate_view, name='generate_certificate'),
+    path('courses/<int:course_id>/doubts/', views.doubt_list, name='doubt_list'),
+    path('courses/<int:course_id>/doubts/new/', views.create_doubt, name='create_doubt'),
+    path('doubts/<int:doubt_id>/', views.doubt_detail, name='doubt_detail'),
 ]
