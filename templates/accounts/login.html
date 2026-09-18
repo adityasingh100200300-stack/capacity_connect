@@ -34,6 +34,9 @@
         <p style="text-align:center; margin-top:1.25rem; font-size:0.85rem;" class="text-muted">
             Don't have an account? <a href="{% url 'register' %}" style="color:var(--primary);">Sign up</a>
         </p>
+        <p style="text-align:center; margin-top:0.5rem; font-size:0.85rem;" class="text-muted">
+            Need to verify your account? <a href="{% url 'resend_otp' %}" style="color:var(--primary);">Resend code</a>
+        </p>
     </div>
 </div>
 {% endblock %}

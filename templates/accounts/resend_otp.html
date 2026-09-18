@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 480px; margin: 3rem auto;">
+    <div class="card">
+        <h1 style="font-size:1.4rem;">Resend Verification Code</h1>
+        <form method="post" class="mt-2">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username_or_email">Username or Email</label>
+                <input type="text" name="username_or_email" id="username_or_email" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Send New Code</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
