@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>Send Invite</h1>
+    <p>Invite a Trainer or Admin by organizational email. They'll receive a signed link to complete registration.</p>
+</div>
+
+<div class="card" style="max-width: 480px;">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+            {% for error in form.email.errors %}
+                <p class="text-danger mt-1" style="font-size:0.85rem;">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.role.id_for_label }}">Role</label>
+            {{ form.role }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Invite</button>
+    </form>
+</div>
+{% endblock %}
