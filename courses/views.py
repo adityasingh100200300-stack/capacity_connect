@@ -9,8 +9,6 @@ from .forms import CourseForm
 from assessments.models import AssessmentAttempt
 from profiles.models import Certificate
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
  
