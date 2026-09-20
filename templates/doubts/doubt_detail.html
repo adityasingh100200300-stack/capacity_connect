@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ doubt.title }}{% endblock %}
+{% block content %}
+<div style="max-width:700px;margin:0 auto;">
+    <a href="{% url 'doubt_list' doubt.course.id %}" class="btn btn-secondary btn-sm mb-2">← Back to Doubts</a>
+    <div class="card mb-2">
+        <h1 style="font-size:1.3rem;">{{ doubt.title }}</h1>
+        <p style="margin-top:0.75rem;line-height:1.7;">{{ doubt.body }}</p>
+        <p class="text-muted mt-2" style="font-size:0.8rem;">{{ doubt.trainee.get_full_name|default:doubt.trainee.username }} · {{ doubt.created_at|date:"M d, Y g:i A" }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.85rem;">
+        {% for c in comments %}
+        <div class="card" {% if c.author.role == 'TRAINER' %}style="border-left:3px solid var(--primary);"{% endif %}>
+            <div class="d-flex justify-between align-center">
+                <p style="font-weight:600;">{{ c.author.get_full_name|default:c.author.username }}{% if c.author.role == 'TRAINER' %} <span class="badge badge-trainer">Trainer</span>{% endif %}</p>
+                <p class="text-muted" style="font-size:0.78rem;">{{ c.created_at|date:"M d, Y g:i A" }}</p>
+            </div>
+            <p class="mt-1" style="line-height:1.6;">{{ c.body }}</p>
+        </div>
+        {% empty %}<p class="text-muted" style="text-align:center;padding:1.5rem 0;">No replies yet.</p>{% endfor %}
+    </div>
+    {% if can_comment %}
+    <div class="card mt-2">
+        <form method="post">{% csrf_token %}
+            <div class="form-group"><label for="body">Add a reply</label><textarea name="body" id="body" class="form-control" rows="3" required></textarea></div>
+            <button type="submit" class="btn btn-primary">Reply</button>
+        </form>
+    </div>
+    {% else %}<p class="text-muted mt-2" style="text-align:center;font-size:0.85rem;">Only the trainee who asked and the course trainer can reply here.</p>{% endif %}
+</div>
+{% endblock %}
