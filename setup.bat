@@ -53,7 +53,32 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: 5. Run database migrations
+:: 5. Check database readiness
+if defined DB_NAME (set "_PG_MODE=1") else if /i "!USE_POSTGRES!"=="true" (set "_PG_MODE=1") else if /i "!USE_POSTGRES!"=="1" (set "_PG_MODE=1")
+
+if defined _PG_MODE (
+    set "_PG_HOST=%DB_HOST%"
+    if not defined _PG_HOST set "_PG_HOST=localhost"
+    set "_PG_PORT=%DB_PORT%"
+    if not defined _PG_PORT set "_PG_PORT=5432"
+    echo [*] PostgreSQL mode detected. Checking connectivity to !_PG_HOST!:!_PG_PORT!...
+    python -c "import sys, os, psycopg2; psycopg2.connect(dbname=os.environ.get('DB_NAME',''), user=os.environ.get('DB_USER',''), password=os.environ.get('DB_PASSWORD',''), host=os.environ.get('DB_HOST','localhost'), port=os.environ.get('DB_PORT','5432'), connect_timeout=5).close(); print('[OK] PostgreSQL is reachable.')"
+    if errorlevel 1 (
+        echo.
+        echo [ERROR] Cannot connect to PostgreSQL at !_PG_HOST!:!_PG_PORT!.
+        echo         Make sure PostgreSQL is running and the following env vars are set:
+        echo           DB_NAME, DB_USER, DB_PASSWORD
+        echo           DB_HOST  (default: localhost^)
+        echo           DB_PORT  (default: 5432^)
+        echo         Set USE_POSTGRES=true to activate the PostgreSQL backend.
+        pause
+        exit /b 1
+    )
+) else (
+    echo [INFO] No DB_NAME / USE_POSTGRES set -- using SQLite (default).
+)
+
+:: 6. Run database migrations
 echo [*] Running database migrations...
 python manage.py migrate
 if errorlevel 1 (

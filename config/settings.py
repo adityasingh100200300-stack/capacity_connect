@@ -2,6 +2,7 @@
 Django settings for capacity_connect project.
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -69,12 +70,32 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# -----------------------------------------------------------------------
+# Use PostgreSQL when USE_POSTGRES=true OR when DB_NAME is set.
+# Falls back to SQLite so teammates without a Postgres instance can still
+# run the project without any extra configuration.
+# -----------------------------------------------------------------------
+_use_postgres = os.environ.get('USE_POSTGRES', '').lower() in ('true', '1', 'yes')
+_db_name = os.environ.get('DB_NAME', '')
+
+if _use_postgres or _db_name:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql',
+            'NAME':     _db_name,
+            'USER':     os.environ.get('DB_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST':     os.environ.get('DB_HOST', 'localhost'),
+            'PORT':     os.environ.get('DB_PORT', '5432'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Primary key type for all models without an explicit pk
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
