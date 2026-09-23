@@ -106,6 +106,21 @@
             {% endif %}
         </div>
 
+        <!-- Doubts -->
+        <div class="card mb-2">
+            <div class="d-flex justify-between align-center mb-2">
+                <h2 style="font-size:1rem;margin-bottom:0;">💭 Doubts</h2>
+                {% if user.role == 'TRAINEE' %}
+                <a href="{% url 'create_doubt' course.id %}" class="btn btn-secondary btn-sm">+ Ask a Doubt</a>
+                {% endif %}
+            </div>
+            <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">
+                {% if user.role == 'TRAINER' %}Questions raised by trainees in this course.
+                {% else %}Ask questions and get answers from your trainer.{% endif %}
+            </p>
+            <a href="{% url 'doubt_list' course.id %}" class="btn btn-secondary btn-sm">View All Doubts</a>
+        </div>
+
         <!-- Feedback -->
         <div class="card">
             <div class="d-flex justify-between align-center mb-2">

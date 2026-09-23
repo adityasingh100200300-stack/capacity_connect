@@ -6,7 +6,7 @@
     <div class="card">
         <div style="text-align:center; margin-bottom: 1.75rem;">
             <h1 style="font-size:1.5rem;">Create your account</h1>
-            <p class="text-muted mt-1">Join as a Trainee or Trainer. An admin will activate your account.</p>
+            <p class="text-muted mt-1">Sign up with your organizational email. We'll send you a verification code. Trainees can sign up here.</p>
         </div>
 
         <form method="post" novalidate>
@@ -38,14 +38,14 @@
                        class="form-control" value="{{ form.email.value|default:'' }}" placeholder="jane@example.com">
                 {% if form.email.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.email.errors|join:", " }}</p>{% endif %}
             </div>
-
-            <div class="form-group">
+            <p class="text-muted mt-1">Sign up with your organizational email. We'll send you a verification code.</p>
+            <!-- <div class="form-group">
                 <label for="id_role">I am a</label>
                 <select name="role" id="id_role" class="form-control">
                     <option value="TRAINEE" {% if form.role.value == 'TRAINEE' %}selected{% endif %}>Trainee</option>
                     <option value="TRAINER" {% if form.role.value == 'TRAINER' %}selected{% endif %}>Trainer</option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="form-group">
                 <label for="id_password1">Password</label>

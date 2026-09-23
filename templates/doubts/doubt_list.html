@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Doubts — {{ course.title }}{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-between align-center">
+    <div><h1>Doubts</h1><p class="text-muted">{{ course.title }}</p></div>
+    {% if user.role == 'TRAINEE' %}<a href="{% url 'create_doubt' course.id %}" class="btn btn-primary">+ Ask a Doubt</a>{% endif %}
+</div>
+{% if doubts %}
+<div style="display:flex;flex-direction:column;gap:1rem;">
+    {% for doubt in doubts %}
+    <a href="{% url 'doubt_detail' doubt.id %}" class="card" style="display:block;text-decoration:none;color:inherit;">
+        <div class="d-flex justify-between align-center">
+            <p style="font-weight:600;">{{ doubt.title }}</p>
+            {% if doubt.is_resolved %}<span class="badge badge-trainee">Resolved</span>{% endif %}
+        </div>
+        <p class="text-muted mt-1" style="font-size:0.85rem;">{{ doubt.body|truncatechars:120 }}</p>
+        <p class="text-muted mt-1" style="font-size:0.78rem;">
+            {{ doubt.trainee.get_full_name|default:doubt.trainee.username }} · {{ doubt.created_at|date:"M d, Y" }} · {{ doubt.comments.count }} repl{{ doubt.comments.count|pluralize:"y,ies" }}
+        </p>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;"><p style="font-size:2rem;">💭</p><p class="text-muted mt-1">No doubts raised yet for this course.</p></div>
+{% endif %}
+{% endblock %}
