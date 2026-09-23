@@ -34,7 +34,48 @@ Write-Host "[*] Activating virtual environment..." -ForegroundColor Cyan
 Write-Host "[*] Installing dependencies from requirements.txt..." -ForegroundColor Cyan
 pip install -r requirements.txt
 
-# 5. Run migrations
+# 5. Check database readiness
+$pgMode = ($env:DB_NAME -ne $null -and $env:DB_NAME -ne '') -or
+          ($env:USE_POSTGRES -match '^(true|1|yes)$')
+
+if ($pgMode) {
+    $pgHost = if ($env:DB_HOST) { $env:DB_HOST } else { 'localhost' }
+    $pgPort = if ($env:DB_PORT) { $env:DB_PORT } else { '5432' }
+    Write-Host "[*] PostgreSQL mode detected. Checking connectivity to ${pgHost}:${pgPort}..." -ForegroundColor Cyan
+    $probeScript = @"
+import sys, os, psycopg2
+try:
+    psycopg2.connect(
+        dbname=os.environ.get('DB_NAME',''),
+        user=os.environ.get('DB_USER',''),
+        password=os.environ.get('DB_PASSWORD',''),
+        host=os.environ.get('DB_HOST','localhost'),
+        port=os.environ.get('DB_PORT','5432'),
+        connect_timeout=5,
+    ).close()
+    print('[OK] PostgreSQL is reachable.')
+except Exception as e:
+    print(f'[ERROR] Cannot connect to PostgreSQL: {e}', file=sys.stderr)
+    sys.exit(1)
+"@
+    python -c $probeScript
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "" 
+        Write-Host "[ERROR] Cannot reach PostgreSQL at ${pgHost}:${pgPort}." -ForegroundColor Red
+        Write-Host "        Make sure PostgreSQL is running and set these environment variables:" -ForegroundColor Yellow
+        Write-Host "          `$env:DB_NAME     = 'capacity_connect'" -ForegroundColor Yellow
+        Write-Host "          `$env:DB_USER     = 'your_db_user'" -ForegroundColor Yellow
+        Write-Host "          `$env:DB_PASSWORD = 'your_password'" -ForegroundColor Yellow
+        Write-Host "          `$env:DB_HOST     = 'localhost'  # (optional, default: localhost)" -ForegroundColor Yellow
+        Write-Host "          `$env:DB_PORT     = '5432'       # (optional, default: 5432)" -ForegroundColor Yellow
+        Write-Host "          `$env:USE_POSTGRES = 'true'      # (activates PostgreSQL backend)" -ForegroundColor Yellow
+        Exit 1
+    }
+} else {
+    Write-Host "[INFO] No DB_NAME / USE_POSTGRES set - using SQLite (default)." -ForegroundColor Gray
+}
+
+# 6. Run migrations
 Write-Host "[*] Running database migrations..." -ForegroundColor Cyan
 python manage.py migrate
 

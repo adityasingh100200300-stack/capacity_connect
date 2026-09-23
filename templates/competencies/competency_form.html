@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Edit Competency — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Edit Competency Score</h1>
+    <p class="text-muted">Manually adjust your proficiency for <strong>{{ competency.skill.name }}</strong>.</p>
+</div>
+
+<div class="card" style="max-width:480px;">
+    <p class="text-muted" style="font-size:0.85rem;margin-bottom:1.25rem;">
+        ⚠️ This score is normally auto-synced from your profile skills.
+        A manual override here will be replaced the next time you update that skill on your profile.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.score.id_for_label }}">{{ form.score.label }}</label>
+            {{ form.score }}
+            {% if form.score.errors %}
+                <p class="text-danger" style="font-size:0.82rem;margin-top:0.25rem;">{{ form.score.errors.0 }}</p>
+            {% endif %}
+        </div>
+        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+            <button type="submit" class="btn btn-primary">Save Score</button>
+            <a href="{% url 'my_competencies' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

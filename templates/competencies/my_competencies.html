@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}My Competencies — Capacity Connect{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h1>My Competencies</h1>
+        <p class="text-muted">Your synced skill proficiency scores. Scores auto-update when you edit skills on your profile.</p>
+    </div>
+    <a href="{% url 'competency_map' %}" class="btn btn-secondary">← Full Map</a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom:1rem;">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if competencies %}
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Skill</th>
+                <th style="text-align:center;">Score</th>
+                <th style="text-align:center;">Level</th>
+                <th style="text-align:right;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comp in competencies %}
+            <tr>
+                <td>{{ comp.skill.name }}</td>
+                <td style="text-align:center;">
+                    <span style="display:inline-block;width:28px;height:28px;border-radius:50%;line-height:28px;font-size:0.78rem;font-weight:700;
+                        {% if comp.score >= 4 %}background:#05966933;color:#34d399;border:1px solid #05966966;
+                        {% elif comp.score == 3 %}background:#0891b233;color:#22d3ee;border:1px solid #0891b266;
+                        {% else %}background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+                        {{ comp.score }}
+                    </span>
+                </td>
+                <td style="text-align:center;font-size:0.85rem;">
+                    {% if comp.score == 5 %}Expert
+                    {% elif comp.score == 4 %}Advanced
+                    {% elif comp.score == 3 %}Intermediate
+                    {% elif comp.score == 2 %}Elementary
+                    {% else %}Beginner{% endif %}
+                </td>
+                <td style="text-align:right;">
+                    <a href="{% url 'competency_update' comp.pk %}" class="btn btn-sm btn-secondary">Edit Score</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="text-muted mt-2" style="font-size:0.8rem;">
+    💡 Scores are automatically synced when you update skills on your <a href="{% url 'profile_edit' %}" style="color:var(--primary);">profile</a>.
+    You can manually override a score here.
+</p>
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:2rem;">📋</p>
+    <p class="text-muted mt-1">No competencies found.</p>
+    <p class="text-muted" style="font-size:0.85rem;margin-top:0.35rem;">
+        Add skills to your <a href="{% url 'profile_edit' %}" style="color:var(--primary);">profile</a> to populate your competency map.
+    </p>
+</div>
+{% endif %}
+{% endblock %}

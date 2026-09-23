@@ -29,20 +29,18 @@
                 </td>
                 {% for skill in skills %}
                 <td style="text-align:center;">
-                    {% with level=row.skills|default_if_none:'' %}
-                        {% if skill.name in row.skills %}
-                            {% with score=row.skills|get_item:skill.name %}
-                            <span style="display:inline-block;width:28px;height:28px;border-radius:50%;line-height:28px;font-size:0.78rem;font-weight:700;
-                                {% if score >= 4 %}background:#05966933;color:#34d399;border:1px solid #05966966;
-                                {% elif score == 3 %}background:#0891b233;color:#22d3ee;border:1px solid #0891b266;
-                                {% else %}background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
-                                {{ score }}
-                            </span>
-                            {% endwith %}
-                        {% else %}
-                            <span class="text-muted" style="font-size:0.8rem;">—</span>
-                        {% endif %}
-                    {% endwith %}
+                    {% if skill.name in row.skills %}
+                        {% with score=row.skills|get_item:skill.name %}
+                        <span style="display:inline-block;width:28px;height:28px;border-radius:50%;line-height:28px;font-size:0.78rem;font-weight:700;
+                            {% if score >= 4 %}background:#05966933;color:#34d399;border:1px solid #05966966;
+                            {% elif score == 3 %}background:#0891b233;color:#22d3ee;border:1px solid #0891b266;
+                            {% else %}background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+                            {{ score }}
+                        </span>
+                        {% endwith %}
+                    {% else %}
+                        <span class="text-muted" style="font-size:0.8rem;">—</span>
+                    {% endif %}
                 </td>
                 {% endfor %}
             </tr>
