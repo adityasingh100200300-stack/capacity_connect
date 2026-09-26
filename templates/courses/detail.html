@@ -90,10 +90,13 @@
                             Pass: {{ assessment.passing_score }}%
                         </p>
                     </div>
-                    </div>
                     <div>
                         {% if user.role == 'TRAINEE' and assessment.status == 'PUBLISHED' %}
+                        {% if assessment.my_attempt %}
+                        <a href="{% url 'assessment_result' assessment.my_attempt.id %}" class="btn btn-secondary btn-sm">View Result</a>
+                        {% else %}
                         <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start</a>
+                        {% endif %}
                         {% endif %}
                         {% if user == course.trainer %}
                         <a href="{% url 'manage_assessment' assessment.id %}" class="btn btn-secondary btn-sm">Manage</a>
@@ -105,6 +108,17 @@
                 <p class="text-muted" style="text-align:center;padding:1rem 0;">No assessments published yet.</p>
             {% endif %}
         </div>
+
+        <!-- Practice -->
+        {% if user.role == 'TRAINEE' %}
+        <div class="card mb-2">
+            <h2 style="font-size:1rem;margin-bottom:0.5rem;">🎯 Practice</h2>
+            <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">
+                A quick timed round of past exam and practice questions. Great for keeping your streak going.
+            </p>
+            <a href="{% url 'start_practice' course.id %}" class="btn btn-primary btn-sm">Start Practice</a>
+        </div>
+        {% endif %}
 
         <!-- Doubts -->
         <div class="card mb-2">

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Practice — {{ session.course.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+
+    <div class="d-flex justify-between align-center mb-2">
+        <p class="text-muted" style="font-size:0.85rem;">Question {{ order|add:1 }} of {{ session.total_count }}</p>
+        <div style="display:flex;gap:1rem;align-items:center;">
+            <span class="badge badge-trainee">🔥 {{ session.current_streak }} in a row</span>
+            {% if not item.answered_at %}
+            <span id="timer" style="font-weight:700;color:var(--warning);">{{ time_limit }}s</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <p style="font-size:1.05rem;font-weight:500;margin-bottom:1.25rem;">{{ item.question_text }}</p>
+
+        {% if item.answered_at %}
+            <!-- Feedback state: answer already recorded, show result -->
+            <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                {% for opt in item.options %}
+                <div style="padding:0.75rem 1rem;border-radius:8px;border:1px solid var(--border);
+                    {% if forloop.counter0 == item.correct_index %}background:var(--success)22;border-color:var(--success);
+                    {% elif forloop.counter0 == item.selected_index %}background:var(--danger)22;border-color:var(--danger);
+                    {% endif %}">
+                    {{ opt }}
+                    {% if forloop.counter0 == item.correct_index %} ✓{% endif %}
+                    {% if forloop.counter0 == item.selected_index and forloop.counter0 != item.correct_index %} ✕{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <p class="mt-2" style="font-weight:600;{% if item.is_correct %}color:var(--success);{% else %}color:var(--danger);{% endif %}">
+                {% if item.timed_out %}⏱ Time's up — no answer recorded.
+                {% elif item.is_correct %}✓ Correct!
+                {% else %}✕ Not quite.{% endif %}
+            </p>
+
+            {% if is_last %}
+            <a href="{% url 'practice_finish' session.id %}" class="btn btn-primary mt-2" style="width:100%;">Finish Practice</a>
+            {% else %}
+            <a href="{% url 'practice_question' session.id order|add:1 %}" class="btn btn-primary mt-2" style="width:100%;">Next Question →</a>
+            {% endif %}
+
+        {% else %}
+            <!-- Answering state -->
+            <form method="post" id="practiceForm">
+                {% csrf_token %}
+                <input type="hidden" name="time_taken" id="timeTakenInput" value="0">
+                <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                    {% for opt in item.options %}
+                    <label style="display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;">
+                        <input type="radio" name="selected_index" value="{{ forloop.counter0 }}" required>
+                        <span>{{ opt }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary mt-2" style="width:100%;">Submit Answer</button>
+            </form>
+
+            <script>
+                (function() {
+                    let secondsLeft = {{ time_limit }};
+                    const startedAt = Date.now();
+                    const timerEl = document.getElementById('timer');
+                    const form = document.getElementById('practiceForm');
+                    const timeInput = document.getElementById('timeTakenInput');
+
+                    const tick = setInterval(() => {
+                        secondsLeft -= 1;
+                        if (timerEl) timerEl.textContent = secondsLeft + 's';
+                        if (secondsLeft <= 0) {
+                            clearInterval(tick);
+                            // Auto-submit with no selection — counts as timed out
+                            timeInput.value = Math.round((Date.now() - startedAt) / 1000);
+                            form.querySelectorAll('input[name=selected_index]').forEach(el => el.checked = false);
+                            form.submit();
+                        }
+                    }, 1000);
+
+                    form.addEventListener('submit', () => {
+                        clearInterval(tick);
+                        timeInput.value = Math.round((Date.now() - startedAt) / 1000);
+                    });
+                })();
+            </script>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,40 +1,34 @@
 {% extends 'base.html' %}
+{% block title %}Create Assessment — {{ course.title }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm mt-4">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Create Assessment for {{ course.title }}</h4>
+<div style="max-width:600px;margin:0 auto;">
+    <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary btn-sm mb-2">← Back to Course</a>
+
+    <div class="card">
+        <h1 style="font-size:1.3rem;margin-bottom:0.25rem;">Create Assessment</h1>
+        <p class="text-muted mb-2">{{ course.title }}</p>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="text-muted mt-1" style="font-size:0.78rem;">{{ field.help_text }}</p>
+                {% endif %}
+                {% if field.errors %}
+                <p class="text-danger mt-1" style="font-size:0.8rem;">{{ field.errors|join:", " }}</p>
+                {% endif %}
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    
-                    {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% if field.errors %}
-                        <div class="text-danger">
-                            {% for error in field.errors %}
-                            <small>{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                    
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Create Assessment</button>
-                    </div>
-                </form>
+            {% endfor %}
+
+            <div class="d-flex gap-1 mt-2">
+                <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary" style="flex:1;text-align:center;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="flex:1;">Create Assessment</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -5,6 +5,9 @@ from django.conf import settings
 
 from .models import Profile, Skill, UserSkill, Certificate, WorkExperience
 from .forms import ProfileForm, CertificateForm, WorkExperienceForm, UserSkillForm
+from .models import Profile, Skill, UserSkill, Certificate, WorkExperience
+from .forms import ProfileForm, CertificateForm, WorkExperienceForm, UserSkillForm
+from courses.models import TraineeStreak, TraineeAchievement    # ← ADD THIS LINE
 
 User = settings.AUTH_USER_MODEL
 
@@ -36,6 +39,14 @@ def profile_view(request, user_id=None):
 
     is_own_profile = (target_user == request.user)
 
+    streak = None
+    trainee_achievements = None
+    if target_user.role == 'TRAINEE':
+        streak = TraineeStreak.objects.filter(trainee=target_user).first()
+        trainee_achievements = TraineeAchievement.objects.filter(
+            trainee=target_user
+        ).select_related('achievement')    
+
     return render(request, 'profiles/profile.html', {
         'target_user': target_user,
         'profile': profile,
@@ -43,6 +54,8 @@ def profile_view(request, user_id=None):
         'certificates': certificates,
         'experiences': experiences,
         'is_own_profile': is_own_profile,
+        'streak': streak,
+        'trainee_achievements': trainee_achievements,
     })
 
 

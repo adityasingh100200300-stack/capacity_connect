@@ -66,6 +66,41 @@
             {% endif %}
         </div>
 
+        {% if target_user.role == 'TRAINEE' %}
+        <!-- Streak -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">🔥 Learning Streak</h2>
+            <div style="display:flex;gap:2rem;">
+                <div>
+                    <p style="font-size:1.8rem;font-weight:800;color:var(--warning);">{{ streak.display_streak|default:0 }}</p>
+                    <p class="text-muted" style="font-size:0.78rem;">current streak</p>
+                </div>
+                <div>
+                    <p style="font-size:1.8rem;font-weight:800;">{{ streak.longest_streak|default:0 }}</p>
+                    <p class="text-muted" style="font-size:0.78rem;">longest streak</p>
+                </div>
+            </div>
+            <p class="text-muted mt-1" style="font-size:0.8rem;">Counts days you download a resource, attempt an assessment, or post/reply in Doubts.</p>
+        </div>
+
+        <!-- Achievements -->
+        <div class="card">
+            <h2 style="font-size:1rem;margin-bottom:0.75rem;">🏆 Achievements</h2>
+            {% if trainee_achievements %}
+                <div style="display:flex;flex-wrap:wrap;gap:0.6rem;">
+                    {% for ta in trainee_achievements %}
+                    <div style="background:var(--surface2);border:1px solid var(--border);padding:0.5rem 0.85rem;border-radius:10px;font-size:0.82rem;display:flex;align-items:center;gap:0.5rem;" title="{{ ta.achievement.description }}">
+                        <span style="font-size:1.1rem;">{{ ta.achievement.icon }}</span>
+                        <span>{{ ta.achievement.title }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No achievements earned yet — keep the streak going!</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 
     <!-- Right column -->
