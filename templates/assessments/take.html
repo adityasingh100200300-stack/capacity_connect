@@ -1,32 +1,32 @@
-<!DOCTYPE html> <!-- Declares this document as an HTML5 file for the browser -->
-<html lang="en"> <!-- Starts the main HTML structure and sets the language to English -->
-<head> <!-- Opens the head section which contains metadata not visible on the page -->
-    <meta charset="UTF-8"> <!-- Sets the character encoding to support standard text formatting -->
-    <title>Take Assessment</title> <!-- Defines the title that appears in the browser tab -->
-</head> <!-- Closes the head section -->
-<body> <!-- Opens the body section where all visible content will be rendered -->
-    <h1>{{ attempt.assessment.title }}</h1> <!-- Renders the dynamic title of the assessment from the backend -->
-    <p>Time allowed: {{ allowed_seconds }} seconds</p> <!-- Displays the total time allowed in seconds -->
-    
-    <form method="POST"> <!-- Opens a form to securely submit data back to the server -->
-        {% csrf_token %} <!-- Injects a hidden security token to prevent Cross-Site Request Forgery attacks -->
-        
-        {% for question in attempt.assessment.questions.all %} <!-- Loops through every question attached to this assessment -->
-            <div> <!-- Opens a container block for a single question -->
-                <h3>{{ question.question_text }}</h3> <!-- Displays the actual text of the current question -->
-                
-                {% for option in question.options %} <!-- Loops through the JSON array of multiple-choice options -->
-                    <label> <!-- Opens a clickable label area for the radio button -->
-                        <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}"> <!-- Creates a radio button linking the question ID to the selected option's index -->
-                        {{ option.text }} <!-- Renders the text of the multiple-choice option -->
-                    </label><br> <!-- Closes the label and adds a line break for readability -->
-                {% endfor %} <!-- Ends the inner loop for the question options -->
-                
-            </div> <!-- Closes the question container block -->
-            <hr> <!-- Draws a horizontal line to separate this question from the next one -->
-        {% endfor %} <!-- Ends the outer loop for the questions -->
-        
-        <button type="submit">Submit Assessment</button> <!-- Creates the final button to submit the form payload -->
-    </form> <!-- Closes the form tag -->
-</body> <!-- Closes the main body section -->
-</html> <!-- Closes the entire HTML document -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Take Assessment</title>
+</head>
+<body>
+    <h1>{{ attempt.assessment.title }}</h1>
+    <p>Time allowed: {{ allowed_seconds }} seconds</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% for question in attempt.assessment.questions.all %}
+            <div>
+                <h3>{{ question.question_text }}</h3>
+
+                {% for option in question.options %}
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}">
+                        {{ option }}
+                    </label><br>
+                {% endfor %}
+
+            </div>
+            <hr>
+        {% endfor %}
+
+        <button type="submit">Submit Assessment</button>
+    </form>
+</body>
+</html>
