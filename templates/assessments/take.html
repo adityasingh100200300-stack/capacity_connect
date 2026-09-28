@@ -1,82 +1,32 @@
-{% extends 'base.html' %}
-{% block title %}Take Assessment: {{ attempt.assessment.title }} — Capacity Connect{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Take Assessment</title>
+</head>
+<body>
+    <h1>{{ attempt.assessment.title }}</h1>
+    <p>Time allowed: {{ allowed_seconds }} seconds</p>
 
-{% block content %}
-<div style="max-width: 760px; margin: 1rem auto 4rem;">
-    <!-- Timer & Header Bar -->
-    <div class="card" style="margin-bottom: 1.5rem; border-color: var(--primary-light); box-shadow: 0 8px 30px var(--shadow-md); position: sticky; top: 70px; z-index: 90;">
-        <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 0.75rem;">
-            <div>
-                <span class="badge badge-trainer" style="margin-bottom: 0.25rem;">Live Assessment</span>
-                <h2 style="font-size: 1.25rem; font-weight: 800; margin: 0;">{{ attempt.assessment.title }}</h2>
-            </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--surface2); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border);">
-                <span style="font-size: 1.1rem;">⏱</span>
-                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Time Remaining:</span>
-                <span id="countdownTimer" style="font-family: monospace; font-size: 1.15rem; font-weight: 800; color: var(--danger);">--:--</span>
-            </div>
-        </div>
-    </div>
-
-    <form method="POST" id="assessmentForm">
+    <form method="POST">
         {% csrf_token %}
 
         {% for question in attempt.assessment.questions.all %}
-        <div class="card" style="margin-bottom: 1.5rem; box-shadow: 0 4px 20px var(--shadow);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-                <span class="badge badge-trainer">Question {{ forloop.counter }}</span>
-                <span class="text-muted" style="font-size: 0.8rem;">Single Choice</span>
-            </div>
+            <div>
+                <h3>{{ question.question_text }}</h3>
 
-            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 1.25rem;">
-                {{ question.question_text }}
-            </h3>
-
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 {% for option in question.options %}
-                <label style="display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1.15rem; border-radius: var(--radius-sm); background: var(--surface2); border: 1.5px solid var(--border); cursor: pointer; transition: all var(--transition);">
-                    <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}" required
-                           style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
-                    <span style="font-size: 0.9rem; color: var(--text); font-weight: 500;">{{ option.text }}</span>
-                </label>
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}">
+                        {{ option }}
+                    </label><br>
                 {% endfor %}
+
             </div>
-        </div>
+            <hr>
         {% endfor %}
 
-        <div class="card" style="text-align: center; padding: 2rem; box-shadow: 0 8px 30px var(--shadow);">
-            <p class="text-muted" style="font-size: 0.875rem; margin-bottom: 1.25rem;">
-                Please review all answers before submission. Grading is instant upon submit.
-            </p>
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; max-width: 320px; font-weight: 700;">
-                Submit Assessment Now →
-            </button>
-        </div>
+        <button type="submit">Submit Assessment</button>
     </form>
-</div>
-
-<script>
-    (function() {
-        var totalSeconds = parseInt("{{ allowed_seconds|default:'600' }}", 10);
-        var timerDisplay = document.getElementById('countdownTimer');
-        var form = document.getElementById('assessmentForm');
-
-        function updateTimer() {
-            if (totalSeconds <= 0) {
-                timerDisplay.textContent = "00:00";
-                if (form) form.submit();
-                return;
-            }
-            var minutes = Math.floor(totalSeconds / 60);
-            var seconds = totalSeconds % 60;
-            timerDisplay.textContent = 
-                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
-                (seconds < 10 ? "0" + seconds : seconds);
-            totalSeconds--;
-        }
-
-        updateTimer();
-        setInterval(updateTimer, 1000);
-    })();
-</script>
-{% endblock %}
+</body>
+</html>

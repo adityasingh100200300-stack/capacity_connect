@@ -136,33 +136,52 @@
                 <a href="{% url 'create_assessment' course.id %}" class="btn btn-primary btn-sm">+ Add Quiz</a>
                 {% endif %}
             </div>
-            <div class="card-body" style="padding-top: 1rem;">
-                {% if assessments %}
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        {% for assessment in assessments %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border);">
-                            <div>
-                                <p style="font-size: 0.9rem; font-weight: 600; color: var(--text);">{{ assessment.title }}</p>
-                                <p class="text-muted" style="font-size: 0.78rem; margin-top: 0.2rem;">
-                                    ⏱ {{ assessment.duration_minutes }} min &nbsp;·&nbsp; Passing: <strong>{{ assessment.passing_score }}%</strong>
-                                </p>
-                            </div>
-                            <div>
-                                {% if user.role == 'TRAINEE' and assessment.status == 'PUBLISHED' %}
-                                <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start Test →</a>
-                                {% endif %}
-                                {% if user == course.trainer or user.role == 'ADMIN' %}
-                                <a href="{% url 'manage_assessment' assessment.id %}" class="btn btn-outline btn-sm">Manage</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
+            {% if assessments %}
+                {% for assessment in assessments %}
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                    <div>
+                        <p style="font-size:0.9rem;font-weight:500;">{{ assessment.title }}</p>
+                        <p class="text-muted" style="font-size:0.78rem;">
+                            ⏱ {{ assessment.duration_minutes }} min &nbsp;·&nbsp;
+                            Pass: {{ assessment.passing_score }}%
+                        </p>
                     </div>
-                {% else %}
-                    <div class="empty-state" style="padding: 2rem 1rem;">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
-                        <p class="text-muted" style="font-size: 0.85rem;">No assessments published yet.</p>
+                    <div>
+                        {% if user.role == 'TRAINEE' and assessment.status == 'PUBLISHED' %}
+                        {% if assessment.my_attempt %}
+                        <a href="{% url 'assessment_result' assessment.my_attempt.id %}" class="btn btn-secondary btn-sm">View Result</a>
+                        {% else %}
+                        <a href="{% url 'start_assessment' assessment.id %}" class="btn btn-primary btn-sm">Start</a>
+                        {% endif %}
+                        {% endif %}
+                        {% if user == course.trainer %}
+                        <a href="{% url 'manage_assessment' assessment.id %}" class="btn btn-secondary btn-sm">Manage</a>
+                        {% endif %}
                     </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted" style="text-align:center;padding:1rem 0;">No assessments published yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Practice -->
+        {% if user.role == 'TRAINEE' %}
+        <div class="card mb-2">
+            <h2 style="font-size:1rem;margin-bottom:0.5rem;">🎯 Practice</h2>
+            <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">
+                A quick timed round of past exam and practice questions. Great for keeping your streak going.
+            </p>
+            <a href="{% url 'start_practice' course.id %}" class="btn btn-primary btn-sm">Start Practice</a>
+        </div>
+        {% endif %}
+
+        <!-- Doubts -->
+        <div class="card mb-2">
+            <div class="d-flex justify-between align-center mb-2">
+                <h2 style="font-size:1rem;margin-bottom:0;">💭 Doubts</h2>
+                {% if user.role == 'TRAINEE' %}
+                <a href="{% url 'create_doubt' course.id %}" class="btn btn-secondary btn-sm">+ Ask a Doubt</a>
                 {% endif %}
             </div>
         </div>

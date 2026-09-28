@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Practice Results — {{ session.course.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:560px;margin:0 auto;text-align:center;">
+    <div class="card">
+        <p style="font-size:2.5rem;">🎯</p>
+        <h1 style="font-size:1.4rem;margin-bottom:0.5rem;">Practice Complete</h1>
+        <p class="text-muted mb-2">{{ session.course.title }}</p>
+
+        <div style="display:flex;justify-content:center;gap:2.5rem;margin:1.5rem 0;">
+            <div>
+                <p style="font-size:1.8rem;font-weight:800;">{{ session.correct_count }}/{{ session.total_count }}</p>
+                <p class="text-muted" style="font-size:0.78rem;">correct</p>
+            </div>
+            <div>
+                <p style="font-size:1.8rem;font-weight:800;color:var(--warning);">🔥 {{ session.best_streak }}</p>
+                <p class="text-muted" style="font-size:0.78rem;">best streak</p>
+            </div>
+        </div>
+
+        <a href="{% url 'start_practice' session.course.id %}" class="btn btn-primary" style="width:100%;">Practice Again</a>
+        <a href="{% url 'course_detail' session.course.id %}" class="btn btn-secondary mt-1" style="width:100%;">Back to Course</a>
+    </div>
+</div>
+{% endblock %}

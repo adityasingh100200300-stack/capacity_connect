@@ -47,9 +47,7 @@
                 <label for="id_username" class="form-label">Username</label>
                 <input type="text" name="username" id="id_username" required
                        class="form-control" value="{{ form.username.value|default:'' }}" placeholder="jane_doe">
-                {% if form.username.errors %}
-                    <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.35rem;">{{ form.username.errors|join:", " }}</p>
-                {% endif %}
+git                {% if form.username.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.username.errors|join:", " }}</p>{% endif %}
             </div>
 
             <div class="form-group">

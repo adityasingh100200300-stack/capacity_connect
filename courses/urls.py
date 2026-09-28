@@ -11,4 +11,8 @@ urlpatterns = [
     path('courses/<int:course_id>/doubts/', views.doubt_list, name='doubt_list'),
     path('courses/<int:course_id>/doubts/new/', views.create_doubt, name='create_doubt'),
     path('doubts/<int:doubt_id>/', views.doubt_detail, name='doubt_detail'),
+    # Add inside urlpatterns in courses/urls.py
+    path('courses/<int:course_id>/practice/start/', views.start_practice, name='start_practice'),
+    path('practice/<int:session_id>/q/<int:order>/', views.practice_question, name='practice_question'),
+    path('practice/<int:session_id>/finish/', views.practice_finish, name='practice_finish'),
 ]
