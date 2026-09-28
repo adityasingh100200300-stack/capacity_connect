@@ -1,52 +1,64 @@
 {% extends 'base.html' %}
-{% block title %}Feedback — {{ course.title }}{% endblock %}
+{% block title %}Course Feedback — {{ course.title }}{% endblock %}
 
 {% block content %}
-<div class="d-flex align-center mb-2" style="gap:0.75rem;">
-    <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary btn-sm">← Course</a>
+<div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+    <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary btn-sm">← Back to Course</a>
 </div>
 
-<div class="page-header d-flex justify-between align-center">
+<div class="page-header d-flex justify-between align-center" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
     <div>
-        <h1>Feedback</h1>
-        <p class="text-muted">{{ course.title }}</p>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">Student Feedback &amp; Reviews</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Quality assurance telemetry for <strong>{{ course.title }}</strong></p>
     </div>
     {% if avg_rating %}
-    <div style="text-align:center;background:var(--surface);border:1px solid var(--border);padding:0.75rem 1.5rem;border-radius:var(--radius);">
-        <p style="font-size:2rem;font-weight:700;color:var(--warning);">{{ avg_rating }}</p>
-        <p class="text-muted" style="font-size:0.78rem;">avg rating · {{ feedbacks|length }} response{{ feedbacks|length|pluralize }}</p>
+    <div style="text-align: center; background: var(--surface); border: 1.5px solid var(--border-dark); padding: 0.75rem 1.75rem; border-radius: var(--radius-lg); box-shadow: 0 4px 16px var(--shadow);">
+        <div style="font-size: 2.25rem; font-weight: 900; color: var(--warning); line-height: 1;">★ {{ avg_rating }}</div>
+        <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.35rem; font-weight: 600;">Average Rating ({{ feedbacks|length }} Review{{ feedbacks|length|pluralize }})</p>
     </div>
     {% endif %}
 </div>
 
 {% if feedbacks %}
-<div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Trainee</th>
-                <th>Rating</th>
-                <th>Comment</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for fb in feedbacks %}
-            <tr>
-                <td>{{ fb.user.get_full_name|default:fb.user.username }}</td>
-                <td style="color:var(--warning);">
-                    {% for i in "12345" %}{% if forloop.counter <= fb.rating %}★{% else %}☆{% endif %}{% endfor %}
-                </td>
-                <td class="text-muted">{{ fb.comment|default:"—" }}</td>
-                <td class="text-muted" style="font-size:0.82rem;">{{ fb.created_at|date:"M d, Y" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+    <div class="table-responsive">
+        <table class="lms-table">
+            <thead>
+                <tr>
+                    <th>Learner</th>
+                    <th>Score</th>
+                    <th>Student Feedback</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fb in feedbacks %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text);">{{ fb.user.get_full_name|default:fb.user.username }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ fb.user.email }}</div>
+                    </td>
+                    <td>
+                        <span style="font-size: 1.1rem; color: var(--warning); letter-spacing: 2px;">
+                            {% for i in "12345" %}{% if forloop.counter <= fb.rating %}★{% else %}☆{% endif %}{% endfor %}
+                        </span>
+                        <span style="font-weight: 700; font-size: 0.8rem; margin-left: 0.35rem; color: var(--text);">{{ fb.rating }}/5</span>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.88rem; color: var(--text);">{{ fb.comment|default:"No comment written." }}</span>
+                    </td>
+                    <td class="text-muted" style="font-size: 0.82rem; white-space: nowrap;">{{ fb.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
-<div class="card" style="text-align:center;padding:2.5rem;">
-    <p class="text-muted">No feedback submitted for this course yet.</p>
+<div class="card empty-state" style="padding: 4rem 2rem;">
+    <div class="empty-state-icon">⭐</div>
+    <h3>No evaluations submitted yet</h3>
+    <p class="text-muted mt-1">Learners submit ratings upon completing course milestones.</p>
 </div>
 {% endif %}
 {% endblock %}

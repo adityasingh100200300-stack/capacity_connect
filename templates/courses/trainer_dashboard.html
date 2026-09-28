@@ -2,64 +2,76 @@
 {% block title %}My Courses — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-between align-center">
+<div class="page-header d-flex justify-between align-center" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1>{% if user.role == 'ADMIN' %}All Courses{% else %}My Courses{% endif %}</h1>
-        <p class="text-muted">Manage your training content and monitor enrollments</p>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">
+            {% if user.role == 'ADMIN' %}Course Directory{% else %}Trainer Dashboard{% endif %}
+        </h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Manage your course curricula, inspect trainees, and author assessments.</p>
     </div>
-    {% if user.role == 'TRAINER' %}
-    <a href="{% url 'create_course' %}" class="btn btn-primary">+ New Course</a>
+    {% if user.role == 'TRAINER' or user.role == 'ADMIN' %}
+    <a href="{% url 'create_course' %}" class="btn btn-primary">
+        <span>+</span> Author New Course
+    </a>
     {% endif %}
 </div>
 
 {% if courses %}
-<div class="card">
+<div class="card" style="box-shadow: 0 4px 24px var(--shadow);">
     <div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Course</th>
-                {% if user.role == 'ADMIN' %}<th>Trainer</th>{% endif %}
-                <th>Enrollments</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in courses %}
-            <tr>
-                <td style="font-weight:500;">{{ course.title }}</td>
-                {% if user.role == 'ADMIN' %}
-                <td class="text-muted">{{ course.trainer.get_full_name|default:course.trainer.username }}</td>
-                {% endif %}
-                <td>
-                    <span style="background:var(--primary)22;color:var(--primary);padding:0.2rem 0.6rem;border-radius:99px;font-size:0.8rem;">
-                        {{ course.enrollment_count }} trainees
-                    </span>
-                </td>
-                <td>
-                    {% if course.is_active %}
-                        <span class="text-success">● Published</span>
-                    {% else %}
-                        <span class="text-muted">● Draft</span>
+        <table class="lms-table">
+            <thead>
+                <tr>
+                    <th>Course Title</th>
+                    {% if user.role == 'ADMIN' %}<th>Trainer</th>{% endif %}
+                    <th>Enrollment</th>
+                    <th>Visibility Status</th>
+                    <th>Creation Date</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text); font-size: 0.95rem;">{{ course.title }}</div>
+                        <div class="text-muted" style="font-size: 0.78rem;">{{ course.description|truncatechars:60 }}</div>
+                    </td>
+                    {% if user.role == 'ADMIN' %}
+                    <td>
+                        <span class="badge badge-trainer">{{ course.trainer.get_full_name|default:course.trainer.username }}</span>
+                    </td>
                     {% endif %}
-                </td>
-                <td class="text-muted" style="font-size:0.85rem;">{{ course.created_at|date:"M d, Y" }}</td>
-                <td>
-                    <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary btn-sm">View</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <td>
+                        <span class="badge badge-trainer" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">
+                            👥 {{ course.enrollment_count }} enrolled
+                        </span>
+                    </td>
+                    <td>
+                        {% if course.is_active %}
+                            <span class="badge badge-active">● Active</span>
+                        {% else %}
+                            <span class="badge badge-pending">● Draft</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted" style="font-size: 0.85rem;">{{ course.created_at|date:"M d, Y" }}</td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-outline btn-sm">Manage →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% else %}
-<div class="card" style="text-align:center;padding:3rem;">
-    <p style="font-size:2rem;">📝</p>
-    <p class="text-muted mt-1">You haven't created any courses yet.</p>
-    <a href="{% url 'create_course' %}" class="btn btn-primary mt-2">Create your first course</a>
+<div class="card empty-state" style="padding: 4rem 2rem;">
+    <div class="empty-state-icon">📝</div>
+    <h3>No courses created yet</h3>
+    <p class="text-muted mt-1">Start by designing and publishing your first curriculum.</p>
+    {% if user.role == 'TRAINER' or user.role == 'ADMIN' %}
+    <a href="{% url 'create_course' %}" class="btn btn-primary mt-3">+ Author First Course</a>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}

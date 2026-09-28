@@ -2,49 +2,69 @@
 {% block title %}Announcements — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-between align-center">
+<div class="page-header d-flex justify-between align-center" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1>Announcements</h1>
-        <p class="text-muted">Platform news, achievements, and updates</p>
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+            <span class="badge badge-trainer">Bulletins</span>
+        </div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">Platform Announcements</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Stay informed on course rollouts, community achievements, and system updates.</p>
     </div>
     {% if user.is_authenticated and user.role == 'ADMIN' %}
-    <a href="{% url 'create_announcement' %}" class="btn btn-primary">+ Announce</a>
+    <a href="{% url 'create_announcement' %}" class="btn btn-primary">
+        <span>+</span> Post Announcement
+    </a>
     {% endif %}
 </div>
 
 {% if announcements %}
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
     {% for ann in announcements %}
-    <div class="card mb-1" style="border-left: 3px solid
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow); position: relative; overflow: hidden; border-left: 4px solid
         {% if ann.announcement_type == 'ACHIEVEMENT' %}var(--warning)
-        {% elif ann.announcement_type == 'CONTENT' %}var(--secondary)
+        {% elif ann.announcement_type == 'CONTENT' %}var(--accent)
         {% elif ann.announcement_type == 'NOTIFICATION' %}var(--primary)
-        {% else %}var(--border){% endif %};">
-        <div class="d-flex justify-between align-center">
-            <div style="display:flex;align-items:center;gap:0.6rem;">
-                {% if ann.is_pinned %}<span title="Pinned" style="font-size:0.85rem;">📌</span>{% endif %}
-                <span style="font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
-                    {% if ann.announcement_type == 'ACHIEVEMENT' %}background:#d9770622;color:#fbbf24;
-                    {% elif ann.announcement_type == 'CONTENT' %}background:#0891b222;color:#22d3ee;
-                    {% elif ann.announcement_type == 'NOTIFICATION' %}background:#4f46e522;color:#a78bfa;
-                    {% else %}background:var(--surface2);color:var(--text-muted);{% endif %}">
+        {% else %}var(--border-dark){% endif %};">
+        
+        <div class="d-flex justify-between align-center" style="margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+                {% if ann.is_pinned %}
+                    <span class="badge" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">📌 Pinned</span>
+                {% endif %}
+                <span class="badge
+                    {% if ann.announcement_type == 'ACHIEVEMENT' %}badge-pending
+                    {% elif ann.announcement_type == 'CONTENT' %}badge-trainer
+                    {% elif ann.announcement_type == 'NOTIFICATION' %}badge-admin
+                    {% else %}badge-active{% endif %}">
                     {{ ann.get_announcement_type_display }}
                 </span>
-                <h2 style="font-size:1rem;">{{ ann.title }}</h2>
+                <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 0;">{{ ann.title }}</h2>
             </div>
-            <span class="text-muted" style="font-size:0.78rem;white-space:nowrap;">{{ ann.created_at|date:"M d, Y" }}</span>
+            <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;">📅 {{ ann.created_at|date:"M d, Y" }}</span>
         </div>
-        <p style="margin-top:0.6rem;line-height:1.7;color:var(--text);">{{ ann.body }}</p>
+
+        <p style="line-height: 1.7; color: var(--text); font-size: 0.92rem; margin: 0.5rem 0 1rem;">
+            {{ ann.body }}
+        </p>
+
         {% if ann.created_by %}
-        <p class="text-muted mt-1" style="font-size:0.78rem;">— {{ ann.created_by.get_full_name|default:ann.created_by.username }}</p>
+        <div style="border-top: 1px solid var(--border); padding-top: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span class="text-muted" style="font-size: 0.78rem;">Posted by</span>
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text);">
+                {{ ann.created_by.get_full_name|default:ann.created_by.username }}
+            </span>
+        </div>
         {% endif %}
     </div>
     {% endfor %}
+    </div>
 {% else %}
-<div class="card" style="text-align:center;padding:3rem;">
-    <p style="font-size:2rem;">📢</p>
-    <p class="text-muted mt-1">No announcements yet.</p>
+<div class="card empty-state" style="padding: 4rem 2rem;">
+    <div class="empty-state-icon">📢</div>
+    <h3>No announcements published yet</h3>
+    <p class="text-muted mt-1">Platform broadcasts and news will appear here.</p>
     {% if user.is_authenticated and user.role == 'ADMIN' %}
-    <a href="{% url 'create_announcement' %}" class="btn btn-primary mt-2">Publish first announcement</a>
+    <a href="{% url 'create_announcement' %}" class="btn btn-primary mt-3">+ Publish first announcement</a>
     {% endif %}
 </div>
 {% endif %}

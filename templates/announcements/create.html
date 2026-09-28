@@ -1,46 +1,62 @@
 {% extends 'base.html' %}
-{% block title %}Create Announcement — Capacity Connect{% endblock %}
+{% block title %}Publish Announcement — Capacity Connect{% endblock %}
 
 {% block content %}
-<div style="max-width:640px; margin:0 auto;">
-    <div class="d-flex align-center mb-2" style="gap:0.75rem;">
-        <a href="{% url 'announcement_list' %}" class="btn btn-secondary btn-sm">← Announcements</a>
-        <h1 style="font-size:1.3rem;">Publish Announcement</h1>
+<div style="max-width: 640px; margin: 0 auto;">
+    <div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+        <a href="{% url 'announcement_list' %}" class="btn btn-secondary btn-sm">← Back to Announcements</a>
     </div>
-    <div class="card">
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% if field.field.widget.input_type == 'textarea' %}
-                    <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                              class="form-control" rows="5"
-                              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
-                {% elif field.field.widget.input_type == 'checkbox' %}
-                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem;">
-                        <input type="checkbox" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                               {% if field.value %}checked{% endif %}
-                               style="width:16px;height:16px;accent-color:var(--primary);">
-                        <span style="font-size:0.85rem;color:var(--text-muted);">Pin this announcement to the top</span>
-                    </div>
-                {% elif field.field.widget.input_type == 'select' %}
-                    <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
-                        {% for val, label in field.field.choices %}
-                        <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                {% else %}
-                    <input type="{{ field.field.widget.input_type }}"
-                           name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                           class="form-control" value="{{ field.value|default:'' }}"
-                           placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
-                {% endif %}
-                {% if field.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ field.errors|join:", " }}</p>{% endif %}
+
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header">
+            <div>
+                <h1 style="font-size: 1.25rem; font-weight: 800; margin: 0;">Publish Platform Bulletin</h1>
+                <p class="text-muted" style="font-size: 0.82rem; margin-top: 0.2rem;">Broadcast updates across the enterprise LMS feed.</p>
             </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary" style="width:100%;">Publish</button>
-        </form>
+            <span class="badge badge-admin">Broadcast Engine</span>
+        </div>
+
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {% if field.field.widget.input_type == 'textarea' %}
+                        <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                                  class="form-control" rows="5"
+                                  placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
+                    {% elif field.field.widget.input_type == 'checkbox' %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; background: var(--surface2); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                            <input type="checkbox" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                                   {% if field.value %}checked{% endif %}
+                                   style="width: 16px; height: 16px; accent-color: var(--primary);">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Pin this announcement to top ticker banner</span>
+                        </div>
+                    {% elif field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
+                            {% for val, label in field.field.choices %}
+                            <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="{{ field.field.widget.input_type }}"
+                               name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                               class="form-control" value="{{ field.value|default:'' }}"
+                               placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+                    {% endif %}
+                    {% if field.errors %}
+                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Publish Announcement</button>
+                    <a href="{% url 'announcement_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

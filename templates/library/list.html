@@ -1,66 +1,82 @@
 {% extends 'base.html' %}
-{% block title %}Library — Capacity Connect{% endblock %}
+{% block title %}Resource Library — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-between align-center">
+<div class="page-header d-flex justify-between align-center" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
     <div>
-        <h1>Learning Library</h1>
-        <p class="text-muted">All available course resources</p>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">Curriculum Resource Library</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Download course slides, datasets, PDF manuals, and instructional videos.</p>
     </div>
-    {% if user.role == 'TRAINER' %}
-    <a href="{% url 'upload_resource' %}" class="btn btn-primary">⬆ Upload Resource</a>
+    {% if user.role == 'TRAINER' or user.role == 'ADMIN' %}
+    <a href="{% url 'upload_resource' %}" class="btn btn-primary">
+        <span>+</span> Upload Resource
+    </a>
     {% endif %}
 </div>
 
 {% if resources %}
-<div class="card">
+<div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
     <div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Course</th>
-                {% if user.role != 'TRAINEE' %}<th>Uploaded By</th>{% endif %}
-                <th>Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for resource in resources %}
-            <tr>
-                <td>
-                    <p style="font-weight:500;">{{ resource.title }}</p>
-                    {% if resource.description %}<p class="text-muted" style="font-size:0.8rem;">{{ resource.description|truncatechars:60 }}</p>{% endif %}
-                </td>
-                <td>
-                    {% if resource.resource_type == 'VIDEO' %}🎥
-                    {% elif resource.resource_type == 'SLIDES' %}📊
-                    {% elif resource.resource_type == 'PDF' %}📄
-                    {% else %}📁{% endif %}
-                    <span class="text-muted" style="font-size:0.82rem;">{{ resource.get_resource_type_display }}</span>
-                </td>
-                <td class="text-muted" style="font-size:0.85rem;">{{ resource.course.title }}</td>
-                {% if user.role != 'TRAINEE' %}<td class="text-muted" style="font-size:0.85rem;">{{ resource.uploaded_by.username }}</td>{% endif %}
-                <td class="text-muted" style="font-size:0.82rem;">{{ resource.uploaded_at|date:"M d, Y" }}</td>
-                <td>
-                    <a href="{% url 'download_resource' resource.id %}" class="btn btn-secondary btn-sm">⬇ Download</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <table class="lms-table">
+            <thead>
+                <tr>
+                    <th>Resource Material</th>
+                    <th>Format</th>
+                    <th>Associated Course</th>
+                    {% if user.role != 'TRAINEE' %}<th>Uploader</th>{% endif %}
+                    <th>Date</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text);">{{ resource.title }}</div>
+                        {% if resource.description %}
+                        <div class="text-muted" style="font-size: 0.78rem;">{{ resource.description|truncatechars:70 }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {% if resource.resource_type == 'PDF' %}badge-danger{% elif resource.resource_type == 'VIDEO' %}badge-trainer{% elif resource.resource_type == 'SLIDES' %}badge-pending{% else %}badge-active{% endif %}">
+                            {% if resource.resource_type == 'VIDEO' %}🎥 Video
+                            {% elif resource.resource_type == 'SLIDES' %}📊 Slides
+                            {% elif resource.resource_type == 'PDF' %}📄 PDF
+                            {% else %}📁 Document{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'course_detail' resource.course.id %}" style="font-weight: 600; color: var(--primary); text-decoration: none;">
+                            {{ resource.course.title }}
+                        </a>
+                    </td>
+                    {% if user.role != 'TRAINEE' %}
+                    <td class="text-muted" style="font-size: 0.82rem;">
+                        {{ resource.uploaded_by.username }}
+                    </td>
+                    {% endif %}
+                    <td class="text-muted" style="font-size: 0.82rem;">{{ resource.uploaded_at|date:"M d, Y" }}</td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'download_resource' resource.id %}" class="btn btn-outline btn-sm">
+                            ⬇ Download
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% else %}
-<div class="card" style="text-align:center;padding:3rem;">
-    <p style="font-size:2rem;">📂</p>
+<div class="card empty-state" style="padding: 4rem 2rem;">
+    <div class="empty-state-icon">📂</div>
+    <h3>No resources uploaded yet</h3>
     <p class="text-muted mt-1">
-        {% if user.role == 'TRAINEE' %}Enroll in courses to access their learning resources.
-        {% else %}No resources uploaded yet. Upload your first one!{% endif %}
+        {% if user.role == 'TRAINEE' %}Course slides and reading materials will appear here once your instructors publish them.
+        {% else %}Upload slide decks, PDF guides, and datasets for your enrolled cohorts.{% endif %}
     </p>
-    {% if user.role == 'TRAINER' %}
-    <a href="{% url 'upload_resource' %}" class="btn btn-primary mt-2">Upload Resource</a>
+    {% if user.role == 'TRAINER' or user.role == 'ADMIN' %}
+    <a href="{% url 'upload_resource' %}" class="btn btn-primary mt-3">+ Upload Resource</a>
     {% endif %}
 </div>
 {% endif %}

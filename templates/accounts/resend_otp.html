@@ -1,16 +1,36 @@
 {% extends 'base.html' %}
+{% block title %}Resend Code — Capacity Connect{% endblock %}
+
 {% block content %}
-<div style="max-width: 480px; margin: 3rem auto;">
-    <div class="card">
-        <h1 style="font-size:1.4rem;">Resend Verification Code</h1>
-        <form method="post" class="mt-2">
+<div style="max-width: 460px; margin: 3.5rem auto;">
+    <div class="card" style="box-shadow: 0 16px 40px var(--shadow-md); border-color: var(--border-dark); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
+
+        <div style="text-align: center; margin-bottom: 2rem; padding-top: 0.5rem;">
+            <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: 12px; background: linear-gradient(135deg, var(--warning), var(--primary)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff; box-shadow: 0 6px 18px var(--primary-glow);">
+                🔄
+            </div>
+            <h1 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.35rem;">Resend Code</h1>
+            <p class="text-muted" style="font-size: 0.875rem;">Enter your registered username or email to receive a new verification code.</p>
+        </div>
+
+        <form method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username_or_email">Username or Email</label>
-                <input type="text" name="username_or_email" id="username_or_email" class="form-control" required>
+                <label for="username_or_email" class="form-label">Username or Email</label>
+                <input type="text" name="username_or_email" id="username_or_email" class="form-control" required autofocus
+                       placeholder="jane_doe or jane@example.com">
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;">Send New Code</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; margin-top: 0.5rem;">
+                Send New Verification Code →
+            </button>
         </form>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Back to <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign in</a>
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}

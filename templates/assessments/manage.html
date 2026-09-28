@@ -1,96 +1,142 @@
 {% extends 'base.html' %}
+{% block title %}Manage Assessment — {{ assessment.title }}{% endblock %}
 
 {% block content %}
-<div class="row mt-4">
-    <div class="col-md-4">
-        <!-- Assessment Info Card -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Assessment Info</h5>
+<div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+    <a href="{% url 'course_detail' assessment.course.id %}" class="btn btn-secondary btn-sm">← Back to Course</a>
+</div>
+
+<div class="page-header d-flex justify-between align-center" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">Manage Assessment</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">{{ assessment.course.title }} · {{ assessment.title }}</p>
+    </div>
+    <div>
+        {% if assessment.status == 'PUBLISHED' %}
+            <span class="badge badge-active" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">● Live &amp; Published</span>
+        {% else %}
+            <span class="badge badge-pending" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">● Draft Mode</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 320px 1fr; gap: 1.75rem; align-items: start;">
+    <!-- Assessment Meta Card -->
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header">
+            <span style="font-weight: 700;">⚙️ Assessment Details</span>
+        </div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.875rem;">
+            <div>
+                <span class="text-muted" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Title</span>
+                <span style="font-weight: 700; color: var(--text);">{{ assessment.title }}</span>
             </div>
-            <div class="card-body">
-                <p><strong>Title:</strong> {{ assessment.title }}</p>
-                <p><strong>Course:</strong> {{ assessment.course.title }}</p>
-                <p><strong>Duration:</strong> {{ assessment.duration_minutes }} mins</p>
-                <p><strong>Passing Score:</strong> {{ assessment.passing_score }}</p>
-                <p><strong>Deadline:</strong> {{ assessment.deadline|date:"M d, Y H:i" }}</p>
-                <p><strong>Status:</strong> 
-                    <span class="badge {% if assessment.status == 'PUBLISHED' %}bg-success{% else %}bg-warning text-dark{% endif %}">
-                        {{ assessment.status }}
-                    </span>
-                </p>
-                
-                {% if assessment.status == 'DRAFT' %}
-                <hr>
+            <div>
+                <span class="text-muted" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Duration</span>
+                <span style="font-weight: 600; color: var(--text);">⏱ {{ assessment.duration_minutes }} minutes</span>
+            </div>
+            <div>
+                <span class="text-muted" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Passing Threshold</span>
+                <span style="font-weight: 600; color: var(--text);">🎯 {{ assessment.passing_score }}%</span>
+            </div>
+            <div>
+                <span class="text-muted" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Submission Deadline</span>
+                <span style="font-weight: 600; color: var(--text);">📅 {{ assessment.deadline|date:"M d, Y H:i" }}</span>
+            </div>
+            <div>
+                <span class="text-muted" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Status</span>
+                <span class="badge {% if assessment.status == 'PUBLISHED' %}badge-active{% else %}badge-pending{% endif %}">
+                    {{ assessment.status }}
+                </span>
+            </div>
+            
+            {% if assessment.status == 'DRAFT' %}
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
                 <form action="{% url 'publish_assessment' assessment.id %}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-success w-100">Publish Assessment</button>
-                    <small class="text-muted d-block mt-2">Publishing makes it visible to all enrolled trainees.</small>
+                    <button type="submit" class="btn btn-success" style="width: 100%;">Publish Assessment</button>
+                    <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.5rem; text-align: center;">
+                        Publishing makes it visible to all enrolled trainees.
+                    </p>
                 </form>
-                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
     
-    <div class="col-md-8">
-        <!-- Add Question Card -->
+    <!-- Main Right Panel -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Add Question Card (Draft only) -->
         {% if assessment.status == 'DRAFT' %}
-        <div class="card shadow-sm mb-4 border-primary">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Add New Question</h5>
+        <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+            <div class="card-header">
+                <span style="font-weight: 700;">➕ Author Multiple-Choice Question</span>
             </div>
             <div class="card-body">
-                <form action="{% url 'add_question' assessment.id %}" method="POST">
+                <form action="{% url 'add_question' assessment.id %}" method="POST" novalidate>
                     {% csrf_token %}
                     
                     {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                         {{ field }}
                         {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
+                        <p class="text-muted" style="font-size: 0.78rem; margin-top: 0.25rem;">{{ field.help_text }}</p>
                         {% endif %}
                         {% if field.errors %}
-                        <div class="text-danger">
+                        <div style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">
                             {% for error in field.errors %}
-                            <small>{{ error }}</small>
+                            <div>{{ error }}</div>
                             {% endfor %}
                         </div>
                         {% endif %}
                     </div>
                     {% endfor %}
                     
-                    <button type="submit" class="btn btn-primary">Add Question</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">+ Save Question</button>
                 </form>
             </div>
         </div>
         {% endif %}
         
         <!-- Question List -->
-        <h4 class="mb-3">Questions ({{ questions.count }})</h4>
-        
-        {% if not questions %}
-        <div class="alert alert-info">No questions added yet.</div>
-        {% else %}
-            {% for question in questions %}
-            <div class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>Q{{ forloop.counter }}: {{ question.question_text }}</strong>
-                    <span class="badge bg-secondary">Weight: {{ question.weightage }}</span>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        {% for option in question.options %}
-                        <li class="list-group-item {% if forloop.counter0 == question.correct_index %}list-group-item-success fw-bold{% endif %}">
-                            {{ option }} 
-                            {% if forloop.counter0 == question.correct_index %}(Correct Answer){% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+        <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+            <div class="card-header d-flex justify-between align-center">
+                <span style="font-weight: 700;">📝 Question Bank ({{ questions.count }})</span>
+                <span class="badge badge-trainer">{{ questions.count }} Items</span>
             </div>
-            {% endfor %}
-        {% endif %}
+            
+            <div class="card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                {% if not questions %}
+                <div class="empty-state" style="padding: 2.5rem 1rem;">
+                    <div class="empty-state-icon" style="font-size: 2rem;">❓</div>
+                    <h3>No questions added yet</h3>
+                    <p class="text-muted">Use the form above to author questions for this assessment.</p>
+                </div>
+                {% else %}
+                    {% for question in questions %}
+                    <div style="padding: 1.15rem; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border);">
+                        <div class="d-flex justify-between align-center mb-1">
+                            <strong style="color: var(--text); font-size: 0.95rem;">
+                                Q{{ forloop.counter }}: {{ question.question_text }}
+                            </strong>
+                            <span class="badge badge-admin">Weight: {{ question.weightage }} pt{{ question.weightage|pluralize }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.75rem;">
+                            {% for option in question.options %}
+                            <div style="padding: 0.5rem 0.85rem; border-radius: 6px; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center; {% if forloop.counter0 == question.correct_index %}background: #dcfce7; color: #15803d; font-weight: 700; border: 1px solid #bbf7d0;{% else %}background: var(--surface); color: var(--text); border: 1px solid var(--border);{% endif %}">
+                                <span>{{ option }}</span>
+                                {% if forloop.counter0 == question.correct_index %}
+                                <span style="font-size: 0.75rem;">✓ Correct Answer</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -2,54 +2,69 @@
 {% block title %}Upload Resource — Capacity Connect{% endblock %}
 
 {% block content %}
-<div style="max-width:580px; margin:0 auto;">
-    <div class="d-flex align-center mb-2" style="gap:0.75rem;">
-        <a href="{% url 'library_list' %}" class="btn btn-secondary btn-sm">← Library</a>
-        <h1 style="font-size:1.3rem;">Upload Resource</h1>
+<div style="max-width: 640px; margin: 0 auto;">
+    <div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+        <a href="{% url 'library_list' %}" class="btn btn-secondary btn-sm">← Back to Library</a>
     </div>
-    <div class="card">
-        <form method="post" enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
 
-            <div class="form-group">
-                <label for="id_course_id">Course</label>
-                <select name="course_id" id="id_course_id" class="form-control" required>
-                    {% for course in courses %}
-                    <option value="{{ course.id }}" {% if initial_course and initial_course.id == course.id %}selected{% endif %}>
-                        {{ course.title }}
-                    </option>
-                    {% endfor %}
-                </select>
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header">
+            <div>
+                <h1 style="font-size: 1.25rem; font-weight: 800; margin: 0;">Upload Curriculum Resource</h1>
+                <p class="text-muted" style="font-size: 0.82rem; margin-top: 0.2rem;">Share PDFs, slides, code, or videos with students.</p>
             </div>
+            <span class="badge badge-trainer">Curriculum Asset</span>
+        </div>
 
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% if field.field.widget.input_type == 'textarea' %}
-                    <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                              class="form-control" rows="3"
-                              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
-                {% elif field.field.widget.input_type == 'select' %}
-                    <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
-                        {% for val, label in field.field.choices %}
-                        <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_course_id" class="form-label">Associated Course</label>
+                    <select name="course_id" id="id_course_id" class="form-control" required>
+                        {% for course in courses %}
+                        <option value="{{ course.id }}" {% if initial_course and initial_course.id == course.id %}selected{% endif %}>
+                            {{ course.title }}
+                        </option>
                         {% endfor %}
                     </select>
-                {% elif field.field.widget.input_type == 'file' %}
-                    <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                           style="background:var(--surface2);border:1px solid var(--border);padding:0.5rem;border-radius:7px;color:var(--text);width:100%;">
-                {% else %}
-                    <input type="{{ field.field.widget.input_type }}"
-                           name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                           class="form-control" value="{{ field.value|default:'' }}"
-                           placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
-                {% endif %}
-                {% if field.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ field.errors|join:", " }}</p>{% endif %}
-            </div>
-            {% endfor %}
+                </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">Upload</button>
-        </form>
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {% if field.field.widget.input_type == 'textarea' %}
+                        <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                                  class="form-control" rows="3"
+                                  placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
+                    {% elif field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
+                            {% for val, label in field.field.choices %}
+                            <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    {% elif field.field.widget.input_type == 'file' %}
+                        <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                               style="background: var(--surface2); border: 1.5px dashed var(--border-dark); padding: 1.25rem; border-radius: var(--radius-sm); color: var(--text); width: 100%; box-sizing: border-box; cursor: pointer;">
+                    {% else %}
+                        <input type="{{ field.field.widget.input_type }}"
+                               name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                               class="form-control" value="{{ field.value|default:'' }}"
+                               placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+                    {% endif %}
+                    {% if field.errors %}
+                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Upload Material</button>
+                    <a href="{% url 'library_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

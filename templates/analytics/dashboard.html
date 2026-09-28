@@ -1,87 +1,115 @@
 {% extends 'base.html' %}
-
-{% block title %}Admin Dashboard — Capacity Connect{% endblock %}
+{% block title %}Admin Analytics — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Platform Analytics</h1>
+<div class="page-header d-flex justify-between align-center" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <a href="{% url 'pending_users' %}" class="btn btn-warning position-relative">
-            Pending Approvals
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+            <span class="badge badge-admin">Platform Insights</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px;">Platform Analytics &amp; Telemetry</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Real-time metrics on learners, trainers, course velocity, and assessment pass rates.</p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="{% url 'pending_users' %}" class="btn btn-outline" style="position: relative;">
+            <span>👥</span> Pending Approvals
             {% if pending_users > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ pending_users }}
+            <span class="badge badge-pending" style="margin-left: 0.4rem; font-size: 0.75rem;">
+                {{ pending_users }} New
             </span>
             {% endif %}
         </a>
     </div>
 </div>
 
-<div class="row">
-    <!-- User Metrics -->
-    <div class="col-md-3 mb-4">
-        <div class="card bg-primary text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Active Trainees</h5>
-                <h2 class="display-4">{{ total_trainees }}</h2>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="card bg-info text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Active Trainers</h5>
-                <h2 class="display-4">{{ total_trainers }}</h2>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Course Metrics -->
-    <div class="col-md-3 mb-4">
-        <div class="card bg-success text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Active Courses</h5>
-                <h2 class="display-4">{{ total_courses }}</h2>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="card bg-secondary text-white h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Total Enrollments</h5>
-                <h2 class="display-4">{{ total_enrollments }}</h2>
-            </div>
-        </div>
+<!-- Key Stat Metric Cards -->
+<div class="stat-grid" style="margin-bottom: 2rem;">
+    <!-- Active Trainees -->
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-blue">🎓</div>
+        <div class="stat-value">{{ total_trainees }}</div>
+        <div class="stat-label">Active Trainees</div>
+        <div class="stat-change up"><span>●</span> Verified learners</div>
     </div>
 
-    <!-- Assessment Metrics -->
-    <div class="col-md-6 mb-4">
-        <div class="card border-dark h-100 shadow-sm">
-            <div class="card-header bg-dark text-white">Assessment Performance</div>
-            <div class="card-body text-center">
-                <div class="row">
-                    <div class="col-6 border-end">
-                        <h1 class="text-primary">{{ total_attempts }}</h1>
-                        <p class="text-muted mb-0">Total Attempts</p>
+    <!-- Active Trainers -->
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-sky">🧑‍🏫</div>
+        <div class="stat-value">{{ total_trainers }}</div>
+        <div class="stat-label">Active Trainers</div>
+        <div class="stat-change up"><span>●</span> Instructors</div>
+    </div>
+
+    <!-- Active Courses -->
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-green">📚</div>
+        <div class="stat-value">{{ total_courses }}</div>
+        <div class="stat-label">Published Courses</div>
+        <div class="stat-change up"><span>●</span> Active curricula</div>
+    </div>
+
+    <!-- Total Enrollments -->
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-amber">📋</div>
+        <div class="stat-value">{{ total_enrollments }}</div>
+        <div class="stat-label">Course Enrollments</div>
+        <div class="stat-change up"><span>●</span> Registrations</div>
+    </div>
+</div>
+
+<!-- Performance & Certifications 2-Column Grid -->
+<div class="grid-2" style="gap: 1.5rem; align-items: stretch;">
+
+    <!-- Assessment Performance -->
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow); display: flex; flex-direction: column;">
+        <div class="card-header d-flex justify-between align-center">
+            <h3 style="font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⏱</span> Assessment Performance
+            </h3>
+            <span class="badge badge-active">Grading System</span>
+        </div>
+        <div class="card-body" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; text-align: center; padding: 1rem 0;">
+                <div style="border-right: 1px solid var(--border); padding-right: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1;">
+                        {{ total_attempts }}
                     </div>
-                    <div class="col-6">
-                        <h1 class="text-success">{{ passed_attempts }}</h1>
-                        <p class="text-muted mb-0">Passed Attempts</p>
+                    <div class="text-muted" style="font-size: 0.82rem; margin-top: 0.5rem; font-weight: 600;">Total Attempts</div>
+                </div>
+                <div style="padding-left: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--success); line-height: 1;">
+                        {{ passed_attempts }}
                     </div>
+                    <div class="text-muted" style="font-size: 0.82rem; margin-top: 0.5rem; font-weight: 600;">Passed Quizzes</div>
                 </div>
             </div>
+            <p class="text-muted" style="font-size: 0.8rem; text-align: center; margin-top: 1rem;">
+                Automatic server-side validation with instant score calculation.
+            </p>
         </div>
     </div>
 
-    <!-- Certification Metrics -->
-    <div class="col-md-6 mb-4">
-        <div class="card border-warning h-100 shadow-sm">
-            <div class="card-header bg-warning text-dark">Certificates Issued</div>
-            <div class="card-body text-center">
-                <h1 class="text-warning display-4">{{ total_certificates }}</h1>
-                <p class="text-muted mb-0">Total certificates generated by trainees</p>
+    <!-- Certification Metric -->
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow); display: flex; flex-direction: column;">
+        <div class="card-header d-flex justify-between align-center">
+            <h3 style="font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🏆</span> Credentials &amp; Certifications
+            </h3>
+            <span class="badge badge-trainer">Certified</span>
+        </div>
+        <div class="card-body" style="flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 2rem 1.5rem;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--blue-100); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 0.75rem;">
+                🏅
             </div>
+            <div style="font-size: 2.75rem; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 0.5rem;">
+                {{ total_certificates }}
+            </div>
+            <div class="text-muted" style="font-size: 0.875rem; font-weight: 600;">Certificates Awarded to Date</div>
+            <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.5rem;">
+                Generated dynamically with cryptographic verification hashes upon course completion.
+            </p>
         </div>
     </div>
+
 </div>
 {% endblock %}

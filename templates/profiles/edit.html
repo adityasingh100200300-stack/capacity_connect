@@ -7,54 +7,68 @@
 {% endblock %}
 
 {% block content %}
-<div style="max-width:580px; margin: 0 auto;">
-
-    <div class="d-flex align-center mb-2" style="gap:0.75rem;">
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="d-flex align-center mb-2" style="gap: 0.75rem;">
         <a href="{% url 'profile_view' %}" class="btn btn-secondary btn-sm">← Back to Profile</a>
-        <h1 style="font-size:1.3rem;">
-            {% if section == 'certificate' %}Add Certificate
-            {% elif section == 'experience' %}Add Work Experience
-            {% elif section == 'skill' %}Add Skill
-            {% else %}Edit Profile{% endif %}
-        </h1>
     </div>
 
-    <div class="card">
-        <form method="post" enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
-
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% if field.field.widget.input_type == 'textarea' %}
-                    <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                              class="form-control" rows="4"
-                              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
-                {% elif field.field.widget.input_type == 'select' %}
-                    <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
-                        {% for val, label in field.field.choices %}
-                            <option value="{{ val }}" {% if field.value|stringformat:'s' == val|stringformat:'s' %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                {% else %}
-                    <input type="{{ field.field.widget.input_type }}"
-                           name="{{ field.html_name }}"
-                           id="{{ field.id_for_label }}"
-                           class="form-control"
-                           value="{{ field.value|default:'' }}"
-                           placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
-                {% endif %}
-                {% if field.errors %}
-                    <p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ field.errors|join:", " }}</p>
-                {% endif %}
-                {% if field.help_text %}
-                    <p class="text-muted" style="font-size:0.78rem;margin-top:0.2rem;">{{ field.help_text }}</p>
-                {% endif %}
+    <div class="card" style="box-shadow: 0 4px 24px var(--shadow);">
+        <div class="card-header">
+            <div>
+                <h1 style="font-size: 1.25rem; font-weight: 800; margin: 0;">
+                    {% if section == 'certificate' %}Add Certificate Credential
+                    {% elif section == 'experience' %}Add Work Experience
+                    {% elif section == 'skill' %}Add Professional Skill
+                    {% else %}Edit Profile Details{% endif %}
+                </h1>
+                <p class="text-muted" style="font-size: 0.82rem; margin-top: 0.2rem;">Keep your professional curriculum credentials up to date.</p>
             </div>
-            {% endfor %}
+            <span class="badge badge-trainer">Profile Management</span>
+        </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">Save</button>
-        </form>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {% if field.field.widget.input_type == 'textarea' %}
+                        <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                                  class="form-control" rows="4"
+                                  placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">{{ field.value|default:'' }}</textarea>
+                    {% elif field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control">
+                            {% for val, label in field.field.choices %}
+                                <option value="{{ val }}" {% if field.value|stringformat:'s' == val|stringformat:'s' %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    {% elif field.field.widget.input_type == 'file' %}
+                        <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                               style="background: var(--surface2); border: 1.5px dashed var(--border-dark); padding: 1rem; border-radius: var(--radius-sm); color: var(--text); width: 100%; box-sizing: border-box;">
+                    {% else %}
+                        <input type="{{ field.field.widget.input_type }}"
+                               name="{{ field.html_name }}"
+                               id="{{ field.id_for_label }}"
+                               class="form-control"
+                               value="{{ field.value|default:'' }}"
+                               placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+                    {% endif %}
+                    {% if field.errors %}
+                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors|join:", " }}</p>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="text-muted" style="font-size: 0.78rem; margin-top: 0.2rem;">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                    <a href="{% url 'profile_view' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

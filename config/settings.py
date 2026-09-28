@@ -118,6 +118,7 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files (uploaded resources, certificates, avatars)
 MEDIA_URL = '/media/'
