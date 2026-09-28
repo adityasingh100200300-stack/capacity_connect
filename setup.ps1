@@ -21,18 +21,29 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
 }
 
 # 2. Virtual Environment
-if (-not (Test-Path ".venv\Scripts\Activate.ps1")) {
+$venvPy = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
+if (-not (Test-Path $venvPy)) {
     Write-Host "[*] Creating virtual environment (.venv)..." -ForegroundColor Cyan
     & $pyCmd -m venv .venv
 }
 
-# 3. Activate
-Write-Host "[*] Activating virtual environment..." -ForegroundColor Cyan
-& .\.venv\Scripts\Activate.ps1
+# 3. Activate (if script allowed)
+if (Test-Path ".venv\Scripts\Activate.ps1") {
+    try {
+        & .\.venv\Scripts\Activate.ps1
+    } catch {
+        Write-Host "[INFO] Continuing using direct virtualenv python..." -ForegroundColor Gray
+    }
+}
 
 # 4. Install dependencies
 Write-Host "[*] Installing dependencies from requirements.txt..." -ForegroundColor Cyan
-pip install -r requirements.txt
+try {
+    & $venvPy -m pip install -r requirements.txt
+} catch {
+    Write-Host "[WARNING] Full install failed. Trying core dependencies..." -ForegroundColor Yellow
+    & $venvPy -m pip install Django==6.1.1 Pillow PyOTP sqlparse tzdata asgiref
+}
 
 # 5. Check database readiness
 $pgMode = ($env:DB_NAME -ne $null -and $env:DB_NAME -ne '') -or
@@ -43,9 +54,13 @@ if ($pgMode) {
     $pgPort = if ($env:DB_PORT) { $env:DB_PORT } else { '5432' }
     Write-Host "[*] PostgreSQL mode detected. Checking connectivity to ${pgHost}:${pgPort}..." -ForegroundColor Cyan
     $probeScript = @"
-import sys, os, psycopg2
+import sys, os
 try:
-    psycopg2.connect(
+    try:
+        import psycopg2 as pg
+    except ImportError:
+        import psycopg as pg
+    pg.connect(
         dbname=os.environ.get('DB_NAME',''),
         user=os.environ.get('DB_USER',''),
         password=os.environ.get('DB_PASSWORD',''),
@@ -58,7 +73,7 @@ except Exception as e:
     print(f'[ERROR] Cannot connect to PostgreSQL: {e}', file=sys.stderr)
     sys.exit(1)
 "@
-    python -c $probeScript
+    & $venvPy -c $probeScript
     if ($LASTEXITCODE -ne 0) {
         Write-Host "" 
         Write-Host "[ERROR] Cannot reach PostgreSQL at ${pgHost}:${pgPort}." -ForegroundColor Red
@@ -77,16 +92,16 @@ except Exception as e:
 
 # 6. Run migrations
 Write-Host "[*] Running database migrations..." -ForegroundColor Cyan
-python manage.py migrate
+& $venvPy manage.py migrate
 
-# 6. Admin user prompt
+# 7. Admin user prompt
 Write-Host ""
 $createAdmin = Read-Host "Would you like to create an admin account now? (y/N)"
 if ($createAdmin -match '^[Yy]') {
-    python manage.py createsuperuser
+    & $venvPy manage.py createsuperuser
 }
 
-# 7. Start server
+# 8. Start server
 Write-Host ""
 Write-Host "===================================================" -ForegroundColor Green
 Write-Host " Server is starting!" -ForegroundColor Green
@@ -96,4 +111,4 @@ Write-Host " Press Ctrl+C to stop the server." -ForegroundColor Yellow
 Write-Host "===================================================" -ForegroundColor Green
 Write-Host ""
 
-python manage.py runserver
+& $venvPy manage.py runserver
