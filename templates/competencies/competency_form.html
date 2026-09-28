@@ -2,29 +2,38 @@
 {% block title %}Edit Competency — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Edit Competency Score</h1>
-    <p class="text-muted">Manually adjust your proficiency for <strong>{{ competency.skill.name }}</strong>.</p>
-</div>
+<div style="max-width: 480px; margin: 0 auto;">
+    <div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+        <a href="{% url 'my_competencies' %}" class="btn btn-secondary btn-sm">← Back to Competencies</a>
+    </div>
 
-<div class="card" style="max-width:480px;">
-    <p class="text-muted" style="font-size:0.85rem;margin-bottom:1.25rem;">
-        ⚠️ This score is normally auto-synced from your profile skills.
-        A manual override here will be replaced the next time you update that skill on your profile.
-    </p>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="{{ form.score.id_for_label }}">{{ form.score.label }}</label>
-            {{ form.score }}
-            {% if form.score.errors %}
-                <p class="text-danger" style="font-size:0.82rem;margin-top:0.25rem;">{{ form.score.errors.0 }}</p>
-            {% endif %}
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header">
+            <div>
+                <h1 style="font-size: 1.25rem; font-weight: 800; margin: 0;">Adjust Rating</h1>
+                <p class="text-muted" style="font-size: 0.82rem; margin-top: 0.2rem;">Skill: <strong>{{ competency.skill.name }}</strong></p>
+            </div>
+            <span class="badge badge-trainer">Score Override</span>
         </div>
-        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
-            <button type="submit" class="btn btn-primary">Save Score</button>
-            <a href="{% url 'my_competencies' %}" class="btn btn-secondary">Cancel</a>
+        <div class="card-body">
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.5;">
+                ℹ️ Manual score overrides take precedence on your matrix view until you re-edit your profile skill.
+            </p>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.score.id_for_label }}" class="form-label">{{ form.score.label }} (1 to 5)</label>
+                    {{ form.score }}
+                    {% if form.score.errors %}
+                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.3rem;">{{ form.score.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Score</button>
+                    <a href="{% url 'my_competencies' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

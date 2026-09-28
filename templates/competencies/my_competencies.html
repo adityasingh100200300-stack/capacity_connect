@@ -2,69 +2,68 @@
 {% block title %}My Competencies — Capacity Connect{% endblock %}
 
 {% block content %}
-<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+<div class="page-header d-flex justify-between align-center" style="margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1>My Competencies</h1>
-        <p class="text-muted">Your synced skill proficiency scores. Scores auto-update when you edit skills on your profile.</p>
+        <h1 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;">My Competency Ratings</h1>
+        <p class="text-muted" style="margin-top: 0.25rem;">Your verified skill proficiency scores. Scores auto-sync when you update skills on your profile.</p>
     </div>
-    <a href="{% url 'competency_map' %}" class="btn btn-secondary">← Full Map</a>
+    <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'edit_profile' %}?section=skill" class="btn btn-primary btn-sm">+ Add Skill</a>
+        <a href="{% url 'competency_map' %}" class="btn btn-outline btn-sm">Full Matrix →</a>
+    </div>
 </div>
-
-{% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}" style="margin-bottom:1rem;">{{ message }}</div>
-    {% endfor %}
-{% endif %}
 
 {% if competencies %}
-<div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Skill</th>
-                <th style="text-align:center;">Score</th>
-                <th style="text-align:center;">Level</th>
-                <th style="text-align:right;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for comp in competencies %}
-            <tr>
-                <td>{{ comp.skill.name }}</td>
-                <td style="text-align:center;">
-                    <span style="display:inline-block;width:28px;height:28px;border-radius:50%;line-height:28px;font-size:0.78rem;font-weight:700;
-                        {% if comp.score >= 4 %}background:#05966933;color:#34d399;border:1px solid #05966966;
-                        {% elif comp.score == 3 %}background:#0891b233;color:#22d3ee;border:1px solid #0891b266;
-                        {% else %}background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
-                        {{ comp.score }}
-                    </span>
-                </td>
-                <td style="text-align:center;font-size:0.85rem;">
-                    {% if comp.score == 5 %}Expert
-                    {% elif comp.score == 4 %}Advanced
-                    {% elif comp.score == 3 %}Intermediate
-                    {% elif comp.score == 2 %}Elementary
-                    {% else %}Beginner{% endif %}
-                </td>
-                <td style="text-align:right;">
-                    <a href="{% url 'competency_update' comp.pk %}" class="btn btn-sm btn-secondary">Edit Score</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+    <div class="table-responsive">
+        <table class="lms-table">
+            <thead>
+                <tr>
+                    <th>Skill Discipline</th>
+                    <th style="text-align: center;">Proficiency Score</th>
+                    <th style="text-align: center;">Level</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comp in competencies %}
+                <tr>
+                    <td>
+                        <span style="font-weight: 700; color: var(--text);">{{ comp.skill.name }}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span style="display: inline-flex; width: 32px; height: 32px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 800;
+                            {% if comp.score >= 4 %}background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;
+                            {% elif comp.score == 3 %}background: var(--blue-100); color: var(--primary); border: 1.5px solid var(--blue-300);
+                            {% else %}background: var(--surface2); color: var(--text-muted); border: 1.5px solid var(--border);{% endif %}">
+                            {{ comp.score }}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        {% if comp.score == 5 %}<span class="badge badge-trainee">Expert</span>
+                        {% elif comp.score == 4 %}<span class="badge badge-trainee">Advanced</span>
+                        {% elif comp.score == 3 %}<span class="badge badge-trainer">Intermediate</span>
+                        {% elif comp.score == 2 %}<span class="badge badge-pending">Elementary</span>
+                        {% else %}<span class="badge badge-pending">Beginner</span>{% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'competency_update' comp.pk %}" class="btn btn-outline btn-sm">Edit Score</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="padding: 1rem 1.5rem; background: var(--surface2); border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted);">
+        💡 Scores are automatically synchronized from your profile skills. You can manually adjust any specific rating here.
+    </div>
 </div>
-<p class="text-muted mt-2" style="font-size:0.8rem;">
-    💡 Scores are automatically synced when you update skills on your <a href="{% url 'profile_edit' %}" style="color:var(--primary);">profile</a>.
-    You can manually override a score here.
-</p>
 {% else %}
-<div class="card" style="text-align:center;padding:3rem;">
-    <p style="font-size:2rem;">📋</p>
-    <p class="text-muted mt-1">No competencies found.</p>
-    <p class="text-muted" style="font-size:0.85rem;margin-top:0.35rem;">
-        Add skills to your <a href="{% url 'profile_edit' %}" style="color:var(--primary);">profile</a> to populate your competency map.
-    </p>
+<div class="card empty-state" style="padding: 4rem 2rem;">
+    <div class="empty-state-icon">📋</div>
+    <h3>No competencies registered yet</h3>
+    <p class="text-muted mt-1">Add verified skills to your profile to generate your competency ratings.</p>
+    <a href="{% url 'edit_profile' %}?section=skill" class="btn btn-primary mt-2">+ Add Skills to Profile</a>
 </div>
 {% endif %}
 {% endblock %}

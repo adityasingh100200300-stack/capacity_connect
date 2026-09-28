@@ -1,31 +1,87 @@
 {% extends 'base.html' %}
-{% block title %}{{ doubt.title }}{% endblock %}
+{% block title %}{{ doubt.title }} — Capacity Connect{% endblock %}
+
 {% block content %}
-<div style="max-width:700px;margin:0 auto;">
-    <a href="{% url 'doubt_list' doubt.course.id %}" class="btn btn-secondary btn-sm mb-2">← Back to Doubts</a>
-    <div class="card mb-2">
-        <h1 style="font-size:1.3rem;">{{ doubt.title }}</h1>
-        <p style="margin-top:0.75rem;line-height:1.7;">{{ doubt.body }}</p>
-        <p class="text-muted mt-2" style="font-size:0.8rem;">{{ doubt.trainee.get_full_name|default:doubt.trainee.username }} · {{ doubt.created_at|date:"M d, Y g:i A" }}</p>
+<div style="max-width: 780px; margin: 0 auto;">
+    <div class="d-flex align-center mb-2" style="gap: 0.75rem;">
+        <a href="{% url 'doubt_list' doubt.course.id %}" class="btn btn-secondary btn-sm">← Back to Q&amp;A Hub</a>
     </div>
-    <div style="display:flex;flex-direction:column;gap:0.85rem;">
-        {% for c in comments %}
-        <div class="card" {% if c.author.role == 'TRAINER' %}style="border-left:3px solid var(--primary);"{% endif %}>
-            <div class="d-flex justify-between align-center">
-                <p style="font-weight:600;">{{ c.author.get_full_name|default:c.author.username }}{% if c.author.role == 'TRAINER' %} <span class="badge badge-trainer">Trainer</span>{% endif %}</p>
-                <p class="text-muted" style="font-size:0.78rem;">{{ c.created_at|date:"M d, Y g:i A" }}</p>
-            </div>
-            <p class="mt-1" style="line-height:1.6;">{{ c.body }}</p>
+
+    <!-- Original Question Card -->
+    <div class="card mb-3" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header d-flex justify-between align-center">
+            <span class="badge badge-trainee">Student Inquiry</span>
+            {% if doubt.is_resolved %}
+                <span class="badge badge-active">✓ Resolved</span>
+            {% else %}
+                <span class="badge badge-pending">Active</span>
+            {% endif %}
         </div>
-        {% empty %}<p class="text-muted" style="text-align:center;padding:1.5rem 0;">No replies yet.</p>{% endfor %}
+        <div class="card-body">
+            <h1 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 0.75rem; color: var(--text);">{{ doubt.title }}</h1>
+            <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text); white-space: pre-line;">{{ doubt.body }}</p>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted);">
+                <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--primary); font-weight: 700;">
+                    {{ doubt.trainee.get_full_name|first|default:doubt.trainee.username|first|upper }}
+                </div>
+                <strong>{{ doubt.trainee.get_full_name|default:doubt.trainee.username }}</strong>
+                <span>·</span>
+                <span>Asked {{ doubt.created_at|date:"M d, Y g:i A" }}</span>
+            </div>
+        </div>
     </div>
+
+    <!-- Replies Thread -->
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Replies ({{ comments|length }})</h2>
+    
+    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+        {% for c in comments %}
+        <div class="card" style="box-shadow: 0 2px 10px var(--shadow); {% if c.author.role == 'TRAINER' %}border-left: 4px solid var(--primary); background: var(--surface);{% endif %}">
+            <div class="card-body" style="padding: 1.25rem 1.5rem;">
+                <div class="d-flex justify-between align-center mb-1">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; background: {% if c.author.role == 'TRAINER' %}linear-gradient(135deg, var(--primary), var(--accent)){% else %}var(--surface3){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #fff; font-weight: 800;">
+                            {{ c.author.get_full_name|first|default:c.author.username|first|upper }}
+                        </div>
+                        <strong style="font-size: 0.9rem;">{{ c.author.get_full_name|default:c.author.username }}</strong>
+                        {% if c.author.role == 'TRAINER' %}
+                            <span class="badge badge-trainer" style="font-size: 0.65rem;">Instructor</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-muted" style="font-size: 0.78rem;">{{ c.created_at|date:"M d, Y g:i A" }}</span>
+                </div>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin-top: 0.5rem; color: var(--text); white-space: pre-line;">{{ c.body }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card empty-state" style="padding: 2.5rem 1rem;">
+            <p class="text-muted">No replies posted yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Reply Form -->
     {% if can_comment %}
-    <div class="card mt-2">
-        <form method="post">{% csrf_token %}
-            <div class="form-group"><label for="body">Add a reply</label><textarea name="body" id="body" class="form-control" rows="3" required></textarea></div>
-            <button type="submit" class="btn btn-primary">Reply</button>
-        </form>
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow);">
+        <div class="card-header">
+            <span style="font-weight: 700;">✍️ Post a Reply</span>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="body">Your Response</label>
+                    <textarea name="body" id="body" class="form-control" rows="4" placeholder="Type your explanation or reply here..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Reply</button>
+            </form>
+        </div>
     </div>
-    {% else %}<p class="text-muted mt-2" style="text-align:center;font-size:0.85rem;">Only the trainee who asked and the course trainer can reply here.</p>{% endif %}
+    {% else %}
+    <p class="text-muted" style="text-align: center; font-size: 0.85rem; padding: 1rem 0;">
+        🔒 Inquiries are private to the student who submitted the question and course instructors.
+    </p>
+    {% endif %}
 </div>
 {% endblock %}

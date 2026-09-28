@@ -1,72 +1,93 @@
 {% extends 'base.html' %}
-{% block title %}Register — Capacity Connect{% endblock %}
+{% block title %}Create Account — Capacity Connect{% endblock %}
 
 {% block content %}
 <div style="max-width: 520px; margin: 3rem auto;">
-    <div class="card">
-        <div style="text-align:center; margin-bottom: 1.75rem;">
-            <h1 style="font-size:1.5rem;">Create your account</h1>
-            <p class="text-muted mt-1">Sign up with your organizational email. We'll send you a verification code. Trainees can sign up here.</p>
+    <div class="card" style="box-shadow: 0 16px 40px var(--shadow-md); border-color: var(--border-dark); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
+
+        <div style="text-align: center; margin-bottom: 2rem; padding-top: 0.5rem;">
+            <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff; box-shadow: 0 6px 18px var(--primary-glow);">
+                🎓
+            </div>
+            <h1 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.35rem;">Create your account</h1>
+            <p class="text-muted" style="font-size: 0.875rem;">Sign up to start your learning journey. An OTP code will be sent to your email.</p>
         </div>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+                <span class="alert-icon">⚠️</span>
+                <div>{{ form.non_field_errors|join:", " }}</div>
+            </div>
+        {% endif %}
 
         <form method="post" novalidate>
             {% csrf_token %}
 
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="id_first_name">First Name</label>
+            <div class="grid-2" style="gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="id_first_name" class="form-label">First Name</label>
                     <input type="text" name="first_name" id="id_first_name"
                            class="form-control" value="{{ form.first_name.value|default:'' }}" placeholder="Jane">
+                    {% if form.first_name.errors %}
+                        <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.25rem;">{{ form.first_name.errors|join:", " }}</p>
+                    {% endif %}
                 </div>
-                <div class="form-group">
-                    <label for="id_last_name">Last Name</label>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="id_last_name" class="form-label">Last Name</label>
                     <input type="text" name="last_name" id="id_last_name"
                            class="form-control" value="{{ form.last_name.value|default:'' }}" placeholder="Doe">
+                    {% if form.last_name.errors %}
+                        <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.25rem;">{{ form.last_name.errors|join:", " }}</p>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="id_username">Username</label>
+                <label for="id_username" class="form-label">Username</label>
                 <input type="text" name="username" id="id_username" required
                        class="form-control" value="{{ form.username.value|default:'' }}" placeholder="jane_doe">
 git                {% if form.username.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.username.errors|join:", " }}</p>{% endif %}
             </div>
 
             <div class="form-group">
-                <label for="id_email">Email</label>
+                <label for="id_email" class="form-label">Email Address</label>
                 <input type="email" name="email" id="id_email" required
                        class="form-control" value="{{ form.email.value|default:'' }}" placeholder="jane@example.com">
-                {% if form.email.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.email.errors|join:", " }}</p>{% endif %}
-            </div>
-            <p class="text-muted mt-1">Sign up with your organizational email. We'll send you a verification code.</p>
-            <!-- <div class="form-group">
-                <label for="id_role">I am a</label>
-                <select name="role" id="id_role" class="form-control">
-                    <option value="TRAINEE" {% if form.role.value == 'TRAINEE' %}selected{% endif %}>Trainee</option>
-                    <option value="TRAINER" {% if form.role.value == 'TRAINER' %}selected{% endif %}>Trainer</option>
-                </select>
-            </div> -->
-
-            <div class="form-group">
-                <label for="id_password1">Password</label>
-                <input type="password" name="password1" id="id_password1" required
-                       class="form-control" placeholder="••••••••">
-                {% if form.password1.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.password1.errors|join:", " }}</p>{% endif %}
+                {% if form.email.errors %}
+                    <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.35rem;">{{ form.email.errors|join:", " }}</p>
+                {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_password2">Confirm Password</label>
-                <input type="password" name="password2" id="id_password2" required
-                       class="form-control" placeholder="••••••••">
-                {% if form.password2.errors %}<p class="text-danger" style="font-size:0.8rem;margin-top:0.25rem;">{{ form.password2.errors|join:", " }}</p>{% endif %}
+            <div class="grid-2" style="gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="id_password1" class="form-label">Password</label>
+                    <input type="password" name="password1" id="id_password1" required
+                           class="form-control" placeholder="••••••••">
+                    {% if form.password1.errors %}
+                        <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.25rem;">{{ form.password1.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="id_password2" class="form-label">Confirm Password</label>
+                    <input type="password" name="password2" id="id_password2" required
+                           class="form-control" placeholder="••••••••">
+                    {% if form.password2.errors %}
+                        <p class="text-danger" style="font-size: 0.78rem; margin-top: 0.25rem;">{{ form.password2.errors|join:", " }}</p>
+                    {% endif %}
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">Create Account</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.95rem;">
+                Create Free Account →
+            </button>
         </form>
 
-        <p style="text-align:center; margin-top:1.25rem; font-size:0.85rem;" class="text-muted">
-            Already have an account? <a href="{% url 'login' %}" style="color:var(--primary);">Sign in</a>
-        </p>
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Already have an account? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign in</a>
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
