@@ -119,12 +119,14 @@ if /i "%CREATE_ADMIN%"=="y" "%VENV_PY%" manage.py createsuperuser
 echo.
 echo ===================================================
 echo  Server is starting!
-echo  Access your app at: http://127.0.0.1:8000/
-echo  Admin panel:        http://127.0.0.1:8000/admin/
+echo  Local PC access:     http://127.0.0.1:8000/
+echo  Mobile / LAN access: http://0.0.0.0:8000/
+echo  (Use your PC's Wi-Fi IP on your phone, e.g. http://10.134.208.132:8000/)
+echo  Admin panel:         http://127.0.0.1:8000/admin/
 echo  Press Ctrl+C to stop the server.
 echo ===================================================
 echo.
 
-"%VENV_PY%" manage.py runserver
+"%VENV_PY%" manage.py runserver 0.0.0.0:8000
 
 pause
