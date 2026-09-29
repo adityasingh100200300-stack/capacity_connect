@@ -94,14 +94,18 @@ except Exception as e:
 Write-Host "[*] Running database migrations..." -ForegroundColor Cyan
 & $venvPy manage.py migrate
 
-# 7. Admin user prompt
+# 7. Seed demo accounts & sample data
+Write-Host "[*] Seeding demo accounts and sample courses..." -ForegroundColor Cyan
+& $venvPy manage.py seed_data
+
+# 8. Admin user prompt
 Write-Host ""
-$createAdmin = Read-Host "Would you like to create an admin account now? (y/N)"
+$createAdmin = Read-Host "Would you like to create an additional custom admin account? (y/N)"
 if ($createAdmin -match '^[Yy]') {
     & $venvPy manage.py createsuperuser
 }
 
-# 8. Start server
+# 9. Start server
 Write-Host ""
 Write-Host "===================================================" -ForegroundColor Green
 Write-Host " Server is starting!" -ForegroundColor Green

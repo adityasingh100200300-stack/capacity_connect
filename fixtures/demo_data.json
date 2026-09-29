@@ -1,0 +1,467 @@
+[
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$0Wz2eQAkFKFtlwgTOCH5CA$GfIUiGrMZstjFaGalq3c3Me+H5uylSCW+pJ6SQZaGz0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "101akash",
+    "first_name": "Akash",
+    "last_name": "Kumar",
+    "email": "101akash@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:20:48.065Z",
+    "role": "TRAINEE",
+    "status": "ACTIVE",
+    "otp_secret": "RHMD64BHEIDV4KHYU7SLNTUSRQOWNBHY",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$1CujSxBwhymUL2kSBSko8U$s/QCKm7dGgPIV6iQlYq4c6SYeMx4v+RWVYAw+vjL8Os=",
+    "last_login": "2026-09-29T12:47:45.844Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@test.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:40:53.141Z",
+    "role": "ADMIN",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$YEsZj5VGC83gZxdGmt1xKa$5lZucUFuhnnF5JoTqWwks9//pTcIU25Gw4mssq+mo4o=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "trainer",
+    "first_name": "Trainer",
+    "last_name": "User",
+    "email": "trainer@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:41:08.910Z",
+    "role": "TRAINER",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$KIOgaN4rfKfSCtLfDjLQM4$vW1uoUXfyZfZ76CCU11mq270Zc6mrK1X7myOLFF2UQo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "trainee",
+    "first_name": "Trainee",
+    "last_name": "User",
+    "email": "trainee@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:41:10.033Z",
+    "role": "TRAINEE",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$QDLiY3eLNGwXyz6xMhOJLo$NkofWBc5gs/sw1/Vv3eHScOadlCPpdWkRk4YAII7kTU=",
+    "last_login": "2026-09-29T12:33:30.911Z",
+    "is_superuser": false,
+    "username": "tr_tr",
+    "first_name": "trainer",
+    "last_name": "trains",
+    "email": "trainer@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:41:11.085Z",
+    "role": "TRAINER",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$jn96USVISAHrGhbTbh9FM8$8MPAJ3F+5X3UUYu1kUr+HwCO8HVF+VOzfvSuUwYTvj8=",
+    "last_login": "2026-09-29T12:30:08.372Z",
+    "is_superuser": false,
+    "username": "tr_le",
+    "first_name": "trainee",
+    "last_name": "learns",
+    "email": "trainee@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:41:12.158Z",
+    "role": "TRAINEE",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$MAciTVfEOwNwCatrDRmeS6$nzZ66yVgGH3FhEF9baEJPKYzchBVHqYggj1quy8eokk=",
+    "last_login": "2026-09-29T12:07:04.520Z",
+    "is_superuser": false,
+    "username": "tr_2",
+    "first_name": "tr",
+    "last_name": "2",
+    "email": "tr2@cap.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-29T11:51:35Z",
+    "role": "TRAINEE",
+    "status": "ACTIVE",
+    "otp_secret": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "bio": "Platform Super Administrator",
+    "avatar": "",
+    "department": "Administration",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "101akash"
+    ],
+    "bio": "",
+    "avatar": "",
+    "department": "",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "trainer"
+    ],
+    "bio": "Senior Technical Instructor specializing in Full-Stack Python and Django.",
+    "avatar": "",
+    "department": "Engineering Training",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "trainee"
+    ],
+    "bio": "Full-stack software developer trainee.",
+    "avatar": "",
+    "department": "Junior Engineering",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "tr_tr"
+    ],
+    "bio": "Lead Data Science & ML Coach.",
+    "avatar": "",
+    "department": "Data Science",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "tr_le"
+    ],
+    "bio": "Product and Operations trainee.",
+    "avatar": "",
+    "department": "Product Operations",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "profiles.profile",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "tr_2"
+    ],
+    "bio": "QA engineer trainee.",
+    "avatar": "",
+    "department": "Quality Assurance",
+    "phone": "",
+    "linkedin_url": ""
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 1,
+  "fields": {
+    "title": "Full-Stack Web Engineering with Django",
+    "description": "Master building robust scalable web architectures, database schemas, and clean responsive UI design systems.",
+    "trainer": [
+      "trainer"
+    ],
+    "created_at": "2026-09-29T11:42:00.541Z",
+    "updated_at": "2026-09-29T11:42:00.541Z",
+    "is_active": true
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 2,
+  "fields": {
+    "title": "introductory course for mathematics and computing",
+    "description": "",
+    "trainer": [
+      "tr_tr"
+    ],
+    "created_at": "2026-09-29T12:06:12.088Z",
+    "updated_at": "2026-09-29T12:06:12.088Z",
+    "is_active": true
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 3,
+  "fields": {
+    "title": "Full-Stack Web Development with Django & Python",
+    "description": "Learn modern web architecture, Django ORM, REST APIs, responsive templates, and enterprise patterns.",
+    "trainer": [
+      "trainer"
+    ],
+    "created_at": "2026-09-29T14:14:11.496Z",
+    "updated_at": "2026-09-29T14:14:11.496Z",
+    "is_active": true
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 4,
+  "fields": {
+    "title": "Database Systems & SQL Optimization",
+    "description": "Master relational database design, indexing strategies, migrations, and high-performance querying.",
+    "trainer": [
+      "trainer"
+    ],
+    "created_at": "2026-09-29T14:14:11.504Z",
+    "updated_at": "2026-09-29T14:14:11.504Z",
+    "is_active": true
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 1,
+  "fields": {
+    "trainee": [
+      "trainee"
+    ],
+    "course": 1,
+    "enrolled_at": "2026-09-29T11:42:00.552Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 2,
+  "fields": {
+    "trainee": [
+      "tr_2"
+    ],
+    "course": 1,
+    "enrolled_at": "2026-09-29T11:56:31.529Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 3,
+  "fields": {
+    "trainee": [
+      "tr_2"
+    ],
+    "course": 2,
+    "enrolled_at": "2026-09-29T12:07:12.435Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 4,
+  "fields": {
+    "trainee": [
+      "tr_le"
+    ],
+    "course": 1,
+    "enrolled_at": "2026-09-29T12:17:05.390Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 5,
+  "fields": {
+    "trainee": [
+      "tr_le"
+    ],
+    "course": 2,
+    "enrolled_at": "2026-09-29T12:30:09.538Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 6,
+  "fields": {
+    "trainee": [
+      "trainee"
+    ],
+    "course": 3,
+    "enrolled_at": "2026-09-29T14:14:11.514Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 7,
+  "fields": {
+    "trainee": [
+      "trainee"
+    ],
+    "course": 4,
+    "enrolled_at": "2026-09-29T14:14:11.524Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 8,
+  "fields": {
+    "trainee": [
+      "tr_2"
+    ],
+    "course": 3,
+    "enrolled_at": "2026-09-29T14:14:11.532Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 9,
+  "fields": {
+    "trainee": [
+      "tr_2"
+    ],
+    "course": 4,
+    "enrolled_at": "2026-09-29T14:14:11.540Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.doubt",
+  "pk": 1,
+  "fields": {
+    "course": 1,
+    "trainee": [
+      "tr_le"
+    ],
+    "title": "regarding autherization",
+    "body": "how to handle auth",
+    "is_resolved": false,
+    "created_at": "2026-09-29T12:27:48.853Z"
+  }
+},
+{
+  "model": "courses.doubt",
+  "pk": 2,
+  "fields": {
+    "course": 2,
+    "trainee": [
+      "tr_le"
+    ],
+    "title": "doubt regarding fourier series",
+    "body": "how to write algo for the series",
+    "is_resolved": false,
+    "created_at": "2026-09-29T12:30:50.903Z"
+  }
+},
+{
+  "model": "courses.traineestreak",
+  "pk": 1,
+  "fields": {
+    "trainee": [
+      "tr_le"
+    ],
+    "current_streak": 1,
+    "longest_streak": 1,
+    "last_active_date": "2026-09-29"
+  }
+},
+{
+  "model": "announcements.announcement",
+  "pk": 1,
+  "fields": {
+    "title": "Welcome to Capacity Connect",
+    "body": "Next-generation institutional training with 3-tier RBAC & automated server-side proctoring.",
+    "announcement_type": "GENERAL",
+    "created_by": [
+      "admin"
+    ],
+    "created_at": "2026-09-29T11:42:00.533Z",
+    "is_pinned": true
+  }
+}
+]

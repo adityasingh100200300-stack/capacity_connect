@@ -36,8 +36,33 @@ bash setup.sh
 3. **Activates the virtual environment**.
 4. **Installs all required dependencies** from `requirements.txt`.
 5. **Applies database migrations** (`python manage.py migrate`).
-6. **Prompts you to create an admin/superuser** (optional).
-7. **Starts the local development server** at `http://127.0.0.1:8000/`.
+6. **Seeds demo accounts & sample courses** (`python manage.py seed_data`).
+7. **Prompts you to create an additional custom admin** (optional).
+8. **Starts the local development server** at `http://127.0.0.1:8000/`.
+
+---
+
+## 🔑 Demo Login Accounts
+
+Because database files (`*.sqlite3`) are intentionally excluded from version control to prevent merge conflicts and security issues, the project includes an automated seeder. Anyone cloning the repository gets these working accounts immediately:
+
+| Role | Username | Password | Notes |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin123` | Full admin privileges, /admin access, announcements |
+| **Trainer** | `trainer` | `trainer123` | Course creation, competency scoring, doubt resolution |
+| **Trainer (Alt)** | `tr_tr` | `trainer123` | Alternate trainer account |
+| **Trainee** | `trainee` | `trainee123` | Course learner, doubt raising, streak tracking |
+| **Trainee 2** | `tr_2` | `trainee123` | Enrolled in sample courses |
+| **Trainee 3** | `tr_le` | `trainee123` | Enrolled in sample courses |
+
+> **Manual Seeding:** You can re-seed or reset demo accounts at any time by running:
+> ```bash
+> python manage.py seed_data
+> ```
+> Or load the fixture file:
+> ```bash
+> python manage.py loaddata fixtures/demo_data.json
+> ```
 
 ---
 

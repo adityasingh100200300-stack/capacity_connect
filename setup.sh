@@ -80,14 +80,18 @@ fi
 echo "[*] Running database migrations..."
 python manage.py migrate
 
-# 5. Ask to create superuser
+# 6. Seed demo accounts & sample data
+echo "[*] Seeding demo accounts and sample courses..."
+python manage.py seed_data
+
+# 7. Ask to create superuser
 echo ""
-read -r -p "Would you like to create an admin account now? (y/N): " CREATE_ADMIN
+read -r -p "Would you like to create an additional custom admin account? (y/N): " CREATE_ADMIN
 if [[ "$CREATE_ADMIN" =~ ^[Yy]$ ]]; then
     python manage.py createsuperuser
 fi
 
-# 6. Start Django server
+# 8. Start Django server
 echo ""
 echo "==================================================="
 echo " Server is starting!"

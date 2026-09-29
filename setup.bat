@@ -109,13 +109,18 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-:: 6. Optional: Create initial admin superuser
+:: 6. Seed demo accounts (Admin, Trainer, Trainee) & sample data
+echo.
+echo [*] Seeding demo accounts and sample data...
+"%VENV_PY%" manage.py seed_data
+
+:: 7. Optional: Create additional custom admin account
 echo.
 set "CREATE_ADMIN="
-set /p CREATE_ADMIN="Would you like to create an admin account now? (y/N): "
+set /p CREATE_ADMIN="Would you like to create an additional custom admin account? (y/N): "
 if /i "%CREATE_ADMIN%"=="y" "%VENV_PY%" manage.py createsuperuser
 
-:: 7. Start Django server
+:: 8. Start Django server
 echo.
 echo ===================================================
 echo  Server is starting!
