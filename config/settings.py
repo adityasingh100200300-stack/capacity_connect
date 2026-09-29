@@ -16,6 +16,29 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# CSRF and Session Settings for Local Network / Mobile Hotspot Testing
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://0.0.0.0:8000',
+    'http://10.134.208.132:8000',
+]
+
+import socket
+try:
+    _hostname = socket.gethostname()
+    for _ip in socket.gethostbyname_ex(_hostname)[2]:
+        _url = f'http://{_ip}:8000'
+        if _url not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(_url)
+except Exception:
+    pass
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

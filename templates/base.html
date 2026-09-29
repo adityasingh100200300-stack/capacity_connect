@@ -18,7 +18,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/lms-design-system.css' %}?v=8">
+    <link rel="stylesheet" href="{% static 'css/lms-design-system.css' %}?v=9">
 
     <style>
         body {
@@ -306,13 +306,26 @@
 </div>
 
 <script>
-    // Mobile Sidebar Toggle
     function toggleSidebar() {
         var sidebar = document.getElementById('lmsSidebar');
         var backdrop = document.getElementById('sidebarBackdrop');
         if (sidebar) sidebar.classList.toggle('open');
         if (backdrop) backdrop.classList.toggle('active');
     }
+
+    // Auto-close sidebar on navigation item click on mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 900) {
+                    var sidebar = document.getElementById('lmsSidebar');
+                    var backdrop = document.getElementById('sidebarBackdrop');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (backdrop) backdrop.classList.remove('active');
+                }
+            });
+        });
+    });
 
     // Theme Toggle with SVG icons
     (function() {

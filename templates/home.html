@@ -387,26 +387,26 @@
 </div>
 
 <!-- Flagship Hero Card with 3D Showcase Image -->
-<div class="card" style="box-shadow: 0 16px 40px var(--shadow-md); border-color: var(--border-dark); padding: 2.75rem 2.5rem; margin-bottom: 2.5rem; position: relative; overflow: hidden; background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);">
+<div class="card hero-showcase-card">
     <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
 
-    <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2.5rem; align-items: center;">
+    <div class="hero-showcase-grid">
         <div>
             <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--blue-100); color: var(--primary); padding: 0.3rem 0.85rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1.25rem;">
                 <span>⚡</span> Institutional Training &amp; Capacity Development
             </div>
 
-            <h1 style="font-size: clamp(2rem, 3.5vw, 2.85rem); font-weight: 900; letter-spacing: -1.2px; line-height: 1.15; margin-bottom: 1rem; color: var(--text);">
+            <h1 class="hero-showcase-title">
                 Build Verified Skills.<br>
                 <span style="background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Deterministic Grading.</span><br>
                 Institutional Rigor.
             </h1>
 
-            <p class="text-muted" style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 2rem;">
+            <p class="text-muted hero-showcase-desc" style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 2rem;">
                 A unified role-orchestrated platform uniting Trainees, Trainers, and Enterprise Admins with strict server-side proctoring, cryptographic credentialing, and talent analytics.
             </p>
 
-            <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+            <div class="hero-actions">
                 <a href="{% url 'register' %}" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.95rem;">
                     Get Started Free →
                 </a>
@@ -423,7 +423,7 @@
         <div style="text-align: center; position: relative;">
             <div style="position: absolute; inset: -10px; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); filter: blur(20px); border-radius: 20px; z-index: 0;"></div>
             <img src="{% static 'img/lms_hero_showcase.jpg' %}" alt="Capacity Connect Modern LMS UI Interface Preview"
-                 style="position: relative; z-index: 1; border-radius: var(--radius); border: 1.5px solid var(--border-dark); box-shadow: 0 16px 40px var(--shadow-md); width: 100%; object-fit: cover; max-height: 380px;">
+                 class="hero-showcase-img">
         </div>
     </div>
 </div>
@@ -463,7 +463,7 @@
             <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0;">Interactive Role Preview</h3>
             <p class="text-muted" style="font-size: 0.82rem; margin-top: 0.2rem;">Preview the bespoke capabilities engineered for each user persona.</p>
         </div>
-        <div style="display: flex; gap: 0.4rem; background: var(--surface2); padding: 0.3rem; border-radius: 999px; border: 1px solid var(--border);">
+        <div class="role-preview-tabs">
             <button class="chip active" id="tab-btn-trainee" onclick="showRolePreview('trainee')">🎓 Trainee</button>
             <button class="chip" id="tab-btn-trainer" onclick="showRolePreview('trainer')">🧑‍🏫 Trainer</button>
             <button class="chip" id="tab-btn-admin" onclick="showRolePreview('admin')">🛡️ Admin</button>
