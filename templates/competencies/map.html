@@ -39,7 +39,7 @@
                         {% if skill.name in row.skills %}
                             {% with score=row.skills|get_item:skill.name %}
                             <span style="display: inline-flex; width: 30px; height: 30px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800;
-                                {% if score >= 4 %}background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;
+                                {% if score >= 4 %}background: var(--success-bg); color: var(--success-text); border: 1.5px solid var(--success-border);
                                 {% elif score == 3 %}background: var(--blue-100); color: var(--primary); border: 1.5px solid var(--blue-300);
                                 {% else %}background: var(--surface2); color: var(--text-muted); border: 1.5px solid var(--border);{% endif %}">
                                 {{ score }}
@@ -57,7 +57,7 @@
     </div>
     <div style="padding: 1rem 1.5rem; background: var(--surface2); border-top: 1px solid var(--border); display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted);">
         <span style="display: flex; align-items: center; gap: 0.4rem;">
-            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #15803d;"></span>
+            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--success);"></span>
             <strong>4–5:</strong> Advanced / Expert
         </span>
         <span style="display: flex; align-items: center; gap: 0.4rem;">

@@ -3,7 +3,7 @@
 
 {% block content %}
 <!-- Profile Header Banner -->
-<div class="card" style="margin-bottom: 2rem; box-shadow: 0 16px 40px var(--shadow-md); border-color: var(--border-dark); position: relative; overflow: hidden;">
+<div class="card" style="margin-bottom: 2rem; box-shadow: 0 16px 40px var(--shadow-md); border-color: var(--border-dark); position: relative; overflow: hidden; padding: 2rem;">
     <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
 
     <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 1.5rem;">
@@ -111,7 +111,7 @@
 
         {% if target_user.role == 'TRAINEE' %}
         <!-- Streak -->
-        <div class="card">
+        <div class="card" style="padding: 1.5rem;">
             <h2 style="font-size:1rem;margin-bottom:0.75rem;">🔥 Learning Streak</h2>
             <div style="display:flex;gap:2rem;">
                 <div>
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Achievements -->
-        <div class="card">
+        <div class="card" style="padding: 1.5rem;">
             <h2 style="font-size:1rem;margin-bottom:0.75rem;">🏆 Achievements</h2>
             {% if trainee_achievements %}
                 <div style="display:flex;flex-wrap:wrap;gap:0.6rem;">

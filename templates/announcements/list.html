@@ -20,7 +20,7 @@
 {% if announcements %}
     <div style="display: flex; flex-direction: column; gap: 1.25rem;">
     {% for ann in announcements %}
-    <div class="card" style="box-shadow: 0 4px 20px var(--shadow); position: relative; overflow: hidden; border-left: 4px solid
+    <div class="card" style="box-shadow: 0 4px 20px var(--shadow); position: relative; overflow: hidden; padding: 1.5rem 1.75rem; border-left: 4px solid
         {% if ann.announcement_type == 'ACHIEVEMENT' %}var(--warning)
         {% elif ann.announcement_type == 'CONTENT' %}var(--accent)
         {% elif ann.announcement_type == 'NOTIFICATION' %}var(--primary)
@@ -29,7 +29,7 @@
         <div class="d-flex justify-between align-center" style="margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.65rem;">
                 {% if ann.is_pinned %}
-                    <span class="badge" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">📌 Pinned</span>
+                    <span class="badge badge-pending">📌 Pinned</span>
                 {% endif %}
                 <span class="badge
                     {% if ann.announcement_type == 'ACHIEVEMENT' %}badge-pending

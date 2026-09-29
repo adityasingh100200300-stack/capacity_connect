@@ -7,19 +7,19 @@
         <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: {% if attempt.score_percent >= attempt.assessment.passing_score %}linear-gradient(90deg, var(--success), #34d399){% else %}linear-gradient(90deg, var(--danger), #f87171){% endif %};"></div>
 
         {% if attempt.status == 'EXPIRED' %}
-            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: #fee2e2; color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: var(--danger-bg); border: 1.5px solid var(--danger-border); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
                 ⏰
             </div>
             <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--danger); margin-bottom: 0.25rem;">Time Expired</h1>
             <p class="text-muted" style="font-size: 0.875rem;">Your assessment time elapsed before submission completed.</p>
         {% elif attempt.score_percent >= attempt.assessment.passing_score %}
-            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: #dcfce7; color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 6px 20px rgba(16,185,129,0.25);">
+            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: var(--success-bg); border: 1.5px solid var(--success-border); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 6px 20px rgba(16,185,129,0.25);">
                 🎉
             </div>
             <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--success); margin-bottom: 0.25rem;">Assessment Passed!</h1>
             <p class="text-muted" style="font-size: 0.875rem;">Great job! You achieved the necessary score to clear this module.</p>
         {% else %}
-            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: #fee2e2; color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+            <div style="width: 72px; height: 72px; margin: 0 auto 1rem; border-radius: 50%; background: var(--danger-bg); border: 1.5px solid var(--danger-border); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
                 📉
             </div>
             <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--danger); margin-bottom: 0.25rem;">Did Not Pass</h1>

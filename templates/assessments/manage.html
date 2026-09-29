@@ -7,7 +7,7 @@
 <div class="grid-2" style="align-items:start;">
 
     <!-- Assessment Info -->
-    <div class="card">
+    <div class="card" style="padding: 1.5rem;">
         <h2 style="font-size:1rem;margin-bottom:0.75rem;">Assessment Info</h2>
         <p><strong>Title:</strong> {{ assessment.title }}</p>
         <p class="mt-1"><strong>Course:</strong> {{ assessment.course.title }}</p>
@@ -33,7 +33,7 @@
     <div>
         <!-- Add Question -->
         {% if assessment.status == 'DRAFT' %}
-        <div class="card mb-2">
+        <div class="card mb-2" style="padding: 1.5rem;">
             <h2 style="font-size:1rem;margin-bottom:0.75rem;">Add New Question</h2>
 
             {% if error %}
@@ -120,7 +120,7 @@
         <div class="alert alert-info">No questions added yet.</div>
         {% else %}
             {% for question in questions %}
-            <div class="card mb-2">
+            <div class="card mb-2" style="padding: 1.25rem 1.5rem;">
                 <strong>Q{{ forloop.counter }}: {{ question.question_text }}</strong>
 
                 <div class="mt-2" style="display:flex;flex-direction:column;gap:0.4rem;">

@@ -33,6 +33,20 @@
   --danger:   #ef4444;
   --info:     #06b6d4;
 
+  /* Semantic state backgrounds & borders */
+  --success-bg:     #dcfce7;
+  --success-border: #86efac;
+  --success-text:   #15803d;
+  --warning-bg:     #fef3c7;
+  --warning-border: #fde68a;
+  --warning-text:   #92400e;
+  --danger-bg:      #fee2e2;
+  --danger-border:  #fecaca;
+  --danger-text:    #991b1b;
+  --info-bg:        #e0f2fe;
+  --info-border:    #bae6fd;
+  --info-text:      #0369a1;
+
   /* Light mode surfaces */
   --bg:          #f0f6ff;
   --surface:     #ffffff;
@@ -75,11 +89,42 @@
   --sidebar-bg:  #0c1525;
   --nav-bg:      rgba(8,14,26,0.92);
   --primary-glow: rgba(59,130,246,0.22);
+
+  /* Blue & Accent overrides so items don't blindingly glare white in dark mode */
+  --blue-50:       rgba(37,99,235,0.08);
+  --blue-100:      rgba(37,99,235,0.18);
+  --blue-200:      rgba(37,99,235,0.28);
+  --blue-300:      rgba(37,99,235,0.38);
+  --accent-light:  rgba(14,165,233,0.15);
+
+  /* Semantic state backgrounds & borders for dark mode */
+  --success-bg:     rgba(16,185,129,0.18);
+  --success-border: rgba(16,185,129,0.35);
+  --success-text:   #34d399;
+  --warning-bg:     rgba(245,158,11,0.18);
+  --warning-border: rgba(245,158,11,0.35);
+  --warning-text:   #fbbf24;
+  --danger-bg:      rgba(239,68,68,0.18);
+  --danger-border:  rgba(239,68,68,0.35);
+  --danger-text:    #f87171;
+  --info-bg:        rgba(6,182,212,0.18);
+  --info-border:    rgba(6,182,212,0.35);
+  --info-text:      #22d3ee;
 }
 
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  color-scheme: light dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
@@ -330,6 +375,22 @@ img { max-width: 100%; display: block; }
 .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .card-body { padding: 1.5rem; }
 
+/* Global card padding safety: if a .card does not contain .card-header, .card-body, or .table-responsive, guarantee generous internal padding */
+.card-padded,
+.card:not(:has(.card-header)):not(:has(.card-body)):not(:has(.table-responsive)):not(.empty-state) {
+  padding: 1.5rem;
+}
+
+/* Dedicated auth card styling with generous, polished padding */
+.card-auth {
+  padding: 2.5rem 2.25rem;
+}
+@media (max-width: 640px) {
+  .card-auth {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
 /* ── Badges ── */
 .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .badge-admin   { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
@@ -343,6 +404,7 @@ img { max-width: 100%; display: block; }
 :root[data-theme="dark"] .badge-trainee { background: rgba(21,128,61,0.2);  color: #4ade80; border-color: rgba(21,128,61,0.35); }
 :root[data-theme="dark"] .badge-active  { background: rgba(16,185,129,0.2); color: #34d399; border-color: rgba(16,185,129,0.35); }
 :root[data-theme="dark"] .badge-pending { background: rgba(245,158,11,0.2); color: #fbbf24; border-color: rgba(245,158,11,0.35); }
+:root[data-theme="dark"] .badge-danger  { background: rgba(239,68,68,0.2);  color: #f87171; border-color: rgba(239,68,68,0.35); }
 
 /* ── Tables ── */
 .lms-table, .table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -372,6 +434,7 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 }
 .form-control::placeholder, input::placeholder, textarea::placeholder { color: var(--text-subtle); }
 select.form-control, select { cursor: pointer; }
+select option { background: var(--surface); color: var(--text); }
 textarea.form-control, textarea { resize: vertical; min-height: 90px; }
 
 /* ── Alerts ── */

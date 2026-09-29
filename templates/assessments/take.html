@@ -1,32 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Take Assessment</title>
-</head>
-<body>
-    <h1>{{ attempt.assessment.title }}</h1>
-    <p>Time allowed: {{ allowed_seconds }} seconds</p>
+{% extends 'base.html' %}
+{% block title %}Taking Assessment: {{ attempt.assessment.title }} — Capacity Connect{% endblock %}
 
+{% block content %}
+<div style="max-width: 760px; margin: 0 auto 3rem;">
+    <!-- Assessment Info Banner -->
+    <div class="card mb-3" style="box-shadow: 0 4px 20px var(--shadow); padding: 1.75rem 2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
+        <div class="d-flex justify-between align-center" style="flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="badge badge-trainer" style="margin-bottom: 0.5rem;">Proctored Examination</span>
+                <h1 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 0.35rem;">{{ attempt.assessment.title }}</h1>
+                <p class="text-muted" style="font-size: 0.875rem; margin: 0;">Course: {{ attempt.assessment.course.title }}</p>
+            </div>
+            <div style="text-align: right; background: var(--surface2); border: 1.5px solid var(--border); padding: 0.75rem 1.25rem; border-radius: var(--radius-sm);">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Passing Threshold</div>
+                <div style="font-size: 1.3rem; font-weight: 800; color: var(--primary);">{{ attempt.assessment.passing_score }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Form -->
     <form method="POST">
         {% csrf_token %}
 
         {% for question in attempt.assessment.questions.all %}
-            <div>
-                <h3>{{ question.question_text }}</h3>
+            <div class="card mb-3" style="box-shadow: 0 2px 12px var(--shadow); padding: 1.5rem 1.75rem;">
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem;">
+                    <span style="font-weight: 800; color: var(--primary); font-size: 1.05rem;">Q{{ forloop.counter }}.</span>
+                    <h3 style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; margin: 0; color: var(--text);">
+                        {{ question.question_text }}
+                    </h3>
+                </div>
 
-                {% for option in question.options %}
-                    <label>
-                        <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}">
-                        {{ option }}
-                    </label><br>
-                {% endfor %}
-
+                <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                    {% for option in question.options %}
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.15rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition); background: var(--surface);">
+                        <input type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}" required
+                               style="accent-color: var(--primary); width: 17px; height: 17px;">
+                        <span style="font-size: 0.9rem; color: var(--text);">{{ option }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
             </div>
-            <hr>
         {% endfor %}
 
-        <button type="submit">Submit Assessment</button>
+        <div style="margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; box-shadow: 0 8px 24px var(--primary-glow);">
+                Submit Final Answers →
+            </button>
+        </div>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}
