@@ -2,7 +2,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$0Wz2eQAkFKFtlwgTOCH5CA$GfIUiGrMZstjFaGalq3c3Me+H5uylSCW+pJ6SQZaGz0=",
+    "password": "pbkdf2_sha256$1500000$2cO1Plz0KfYsT3aLJMfSsB$9nN7mynoeK7tuIA4zqUxmdbIoAY2IgmDxQJ+B+TX/V0=",
     "last_login": null,
     "is_superuser": false,
     "username": "101akash",
@@ -22,7 +22,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$1CujSxBwhymUL2kSBSko8U$s/QCKm7dGgPIV6iQlYq4c6SYeMx4v+RWVYAw+vjL8Os=",
+    "password": "pbkdf2_sha256$1500000$pPU6DobkKxQun5Eh397Dod$J+JDEI16yW1CUPQ342o9Z39X4HYy0oOoTtCgaw2fZIE=",
     "last_login": "2026-09-29T12:47:45.844Z",
     "is_superuser": true,
     "username": "admin",
@@ -42,7 +42,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$YEsZj5VGC83gZxdGmt1xKa$5lZucUFuhnnF5JoTqWwks9//pTcIU25Gw4mssq+mo4o=",
+    "password": "pbkdf2_sha256$1500000$MSgNzRgXgcvkaRa2LkLiJy$HKoOVJx6XXjrB/qt8Ckzyc5YPfdTkbdWFP8itAV1Qwk=",
     "last_login": null,
     "is_superuser": false,
     "username": "trainer",
@@ -62,7 +62,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$KIOgaN4rfKfSCtLfDjLQM4$vW1uoUXfyZfZ76CCU11mq270Zc6mrK1X7myOLFF2UQo=",
+    "password": "pbkdf2_sha256$1500000$jVIIZLA9Q32Lyk1r5JEiZ6$p5LqFQO9Uwbk/ty9u/2X+3Vbo7BVlQcMkrLv+Q1jqZ8=",
     "last_login": null,
     "is_superuser": false,
     "username": "trainee",
@@ -82,7 +82,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$QDLiY3eLNGwXyz6xMhOJLo$NkofWBc5gs/sw1/Vv3eHScOadlCPpdWkRk4YAII7kTU=",
+    "password": "pbkdf2_sha256$1500000$8RONNLuQuAXtKCunldjjMo$P+X5Mvid37UBF9rGq0LxwnU8akrWopV8wVFkmLJ6Q20=",
     "last_login": "2026-09-29T12:33:30.911Z",
     "is_superuser": false,
     "username": "tr_tr",
@@ -102,7 +102,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$jn96USVISAHrGhbTbh9FM8$8MPAJ3F+5X3UUYu1kUr+HwCO8HVF+VOzfvSuUwYTvj8=",
+    "password": "pbkdf2_sha256$1500000$jaNomG6PoQatCdo5K4PjRp$RHefUCGYZfB7IDW/llBWLdniPRRL31IDQgBgjQ94fsE=",
     "last_login": "2026-09-29T12:30:08.372Z",
     "is_superuser": false,
     "username": "tr_le",
@@ -122,7 +122,7 @@
 {
   "model": "accounts.customuser",
   "fields": {
-    "password": "pbkdf2_sha256$1500000$MAciTVfEOwNwCatrDRmeS6$nzZ66yVgGH3FhEF9baEJPKYzchBVHqYggj1quy8eokk=",
+    "password": "pbkdf2_sha256$1500000$7MRaf6eEI2ZxI60vrz4XpP$g0aEWJlq29uxgiZKhkHFWt0GO/Sj8/ONeAePtaadzFQ=",
     "last_login": "2026-09-29T12:07:04.520Z",
     "is_superuser": false,
     "username": "tr_2",
@@ -160,9 +160,9 @@
     "user": [
       "101akash"
     ],
-    "bio": "",
+    "bio": "Software Engineering Trainee.",
     "avatar": "",
-    "department": "",
+    "department": "Engineering Trainee",
     "phone": "",
     "linkedin_url": ""
   }
@@ -406,6 +406,32 @@
     ],
     "course": 4,
     "enrolled_at": "2026-09-29T14:14:11.540Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 10,
+  "fields": {
+    "trainee": [
+      "101akash"
+    ],
+    "course": 3,
+    "enrolled_at": "2026-09-29T14:33:16.300Z",
+    "is_completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 11,
+  "fields": {
+    "trainee": [
+      "101akash"
+    ],
+    "course": 4,
+    "enrolled_at": "2026-09-29T14:33:16.309Z",
     "is_completed": false,
     "completed_at": null
   }

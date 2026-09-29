@@ -95,6 +95,19 @@ class Command(BaseCommand):
                 "department": "Product Operations",
                 "bio": "Product and Operations trainee.",
             },
+            {
+                "username": "101akash",
+                "email": "101akash@cap.com",
+                "password": "trainee123",
+                "role": "TRAINEE",
+                "status": "ACTIVE",
+                "is_staff": False,
+                "is_superuser": False,
+                "first_name": "Akash",
+                "last_name": "Kumar",
+                "department": "Engineering Trainee",
+                "bio": "Software Engineering Trainee.",
+            },
         ]
 
         seeded_users = {}
@@ -160,7 +173,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f"  [OK] Created course: {c2.title}"))
 
             # Enroll trainees
-            for trainee_uname in ["trainee", "tr_2"]:
+            for trainee_uname in ["trainee", "tr_2", "101akash"]:
                 trainee_user = seeded_users.get(trainee_uname)
                 if trainee_user:
                     e1, _ = Enrollment.objects.get_or_create(trainee=trainee_user, course=c1)
@@ -185,4 +198,5 @@ class Command(BaseCommand):
         self.stdout.write("  * Admin:   Username: admin    | Password: admin123")
         self.stdout.write("  * Trainer: Username: trainer  | Password: trainer123")
         self.stdout.write("  * Trainee: Username: trainee  | Password: trainee123")
-        self.stdout.write("  * Trainee: Username: tr_2     | Password: trainee123\n")
+        self.stdout.write("  * Trainee: Username: tr_2     | Password: trainee123")
+        self.stdout.write("  * Trainee: Username: 101akash | Password: trainee123\n")

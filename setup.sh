@@ -82,6 +82,9 @@ python manage.py migrate
 
 # 6. Seed demo accounts & sample data
 echo "[*] Seeding demo accounts and sample courses..."
+if [ -f "fixtures/demo_data.json" ]; then
+    python manage.py loaddata fixtures/demo_data.json
+fi
 python manage.py seed_data
 
 # 7. Ask to create superuser

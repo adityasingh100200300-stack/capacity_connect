@@ -112,6 +112,9 @@ if %ERRORLEVEL% neq 0 (
 :: 6. Seed demo accounts (Admin, Trainer, Trainee) & sample data
 echo.
 echo [*] Seeding demo accounts and sample data...
+if exist "fixtures\demo_data.json" (
+    "%VENV_PY%" manage.py loaddata fixtures\demo_data.json
+)
 "%VENV_PY%" manage.py seed_data
 
 :: 7. Optional: Create additional custom admin account

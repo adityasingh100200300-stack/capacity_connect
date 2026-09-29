@@ -96,6 +96,9 @@ Write-Host "[*] Running database migrations..." -ForegroundColor Cyan
 
 # 7. Seed demo accounts & sample data
 Write-Host "[*] Seeding demo accounts and sample courses..." -ForegroundColor Cyan
+if (Test-Path "fixtures\demo_data.json") {
+    & $venvPy manage.py loaddata fixtures\demo_data.json
+}
 & $venvPy manage.py seed_data
 
 # 8. Admin user prompt
